@@ -23,5 +23,7 @@ echo "==> regressão (invariantes sagrados N1/N2/N3)"
 echo "==> restart do serviço (reload, sem derrubar vizinhos)"
 sudo systemctl restart aeronav
 sudo systemctl --no-pager --lines=0 status aeronav
-curl -s http://127.0.0.1:8050/ -o /dev/null -w "health: %{http_code}\n" || true
+# o app escuta no APURADOR_BIND (ex.: 172.19.0.1:8050, gateway Docker p/ cloudflared), não em 127.0.0.1
+BIND=$(grep -E '^APURADOR_BIND' /opt/aeronav/aeronav.env 2>/dev/null | cut -d= -f2)
+curl -s "http://${BIND:-127.0.0.1:8050}/" -o /dev/null -w "health: %{http_code} (esperado 302 = redirect login)\n" || true
 echo "==> OK ($BEFORE -> $AFTER)"
