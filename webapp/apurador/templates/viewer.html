@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Viewer — Apurador{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+  <h4 class="mb-0">Viewer</h4>
+  <form class="d-flex gap-2 ms-auto" method="get">
+    <select class="form-select form-select-sm" name="sala" onchange="this.form.submit()" style="width:auto">
+      {% for p in provas %}<option value="{{ p.slug }}" {{ 'selected' if p.slug==slug }}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </form>
+  <span class="badge text-bg-secondary">{{ n_pilots }} piloto(s)</span>
+</div>
+<div id="map" data-slug="{{ slug }}" style="height:560px" class="rounded border"></div>
+<div id="legend" class="small text-secondary mt-2"></div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
+{% endblock %}

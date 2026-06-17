@@ -1,0 +1,339 @@
+{
+  "_aviso": "PROVA APROXIMADA — coordenadas inferidas por análise de bearing de 6 tracks. NÃO é a prova oficial. 7 TPs marcados '??' têm coord (0,0) e NÃO podem ser usados em scoring. Para a prova real, contatar Alan Braga (+5541999636314). Ver relatorios-paradigmas/paranapanema-2025-scores.md.",
+  "_fonte": "igc.paramotorpr.com.br — 3º Open CABPP Paranapanema 2025, 03/10/2025",
+  "_metodo": "Clustering espacial (350m) de viradas de bearing (threshold 22°, janela 20s) em 6 tracks N1 Paramotor + inferência de sequência pelo track do Erick (30/30 TPs)",
+  "_precisao": "TPs com nota 'Erick <100m' são confiáveis. TPs com dist>100m ou nota [2 hits] são aproximados.",
+  "prova": {
+    "name": "N1 — Paranapanema 2025 (INFERIDA)",
+    "type": "n1",
+    "slug": "n1-paranapanema-2025-aprox",
+    "targetMin": 60,
+    "windowMin": 60,
+    "tz": -3,
+    "maxPoints": 1000,
+    "scoreModel": "relative",
+    "scale": "1:50000"
+  },
+  "points": [
+    {
+      "name": "SP",
+      "type": "SP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.32459,
+      "lon": -48.72017,
+      "alt": 0,
+      "_note": "Erick 24m, 09:40:35"
+    },
+    {
+      "name": "1",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.33645,
+      "lon": -48.7251,
+      "alt": 0,
+      "_note": "Erick 88m, 09:42:44"
+    },
+    {
+      "name": "2",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.35506,
+      "lon": -48.73821,
+      "alt": 0,
+      "_note": "Erick 19m, 09:44:59"
+    },
+    {
+      "name": "3",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.37528,
+      "lon": -48.76716,
+      "alt": 0,
+      "_note": "Erick 48m, 09:47:53"
+    },
+    {
+      "name": "4",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.37789,
+      "lon": -48.78374,
+      "alt": 0,
+      "_note": "Erick 13m, 09:49:05"
+    },
+    {
+      "name": "5",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.38553,
+      "lon": -48.79295,
+      "alt": 0,
+      "_note": "Erick 72m, 09:50:28"
+    },
+    {
+      "name": "6",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.39023,
+      "lon": -48.80208,
+      "alt": 0,
+      "_note": "Erick 7m, 09:51:18"
+    },
+    {
+      "name": "7",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.38217,
+      "lon": -48.82312,
+      "alt": 0,
+      "_note": "Erick 12m, 09:52:55"
+    },
+    {
+      "name": "8",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.38251,
+      "lon": -48.83843,
+      "alt": 0,
+      "_note": "Erick 16m, 09:53:55 [2 hits 32m apart]"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 09:54-10:01)"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 09:54-10:01)"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 09:54-10:01)"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 09:54-10:01)"
+    },
+    {
+      "name": "13",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.41222,
+      "lon": -48.81766,
+      "alt": 0,
+      "_note": "Erick 70m, 10:01:39"
+    },
+    {
+      "name": "14",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.43722,
+      "lon": -48.83157,
+      "alt": 0,
+      "_note": "Erick 19m, 10:04:26"
+    },
+    {
+      "name": "15",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.44862,
+      "lon": -48.8274,
+      "alt": 0,
+      "_note": "Erick ~85m, 10:06 [2 hits 167m apart — centróide]"
+    },
+    {
+      "name": "16",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.45504,
+      "lon": -48.81076,
+      "alt": 0,
+      "_note": "Erick 16m, 10:09:26"
+    },
+    {
+      "name": "17",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.45942,
+      "lon": -48.80909,
+      "alt": 0,
+      "_note": "Erick 112m, 10:10:02"
+    },
+    {
+      "name": "18",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.4646,
+      "lon": -48.81017,
+      "alt": 0,
+      "_note": "Erick 84m, 10:10:34"
+    },
+    {
+      "name": "19",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.46744,
+      "lon": -48.81179,
+      "alt": 0,
+      "_note": "Erick 33m, 10:11:16"
+    },
+    {
+      "name": "20",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.4682,
+      "lon": -48.7775,
+      "alt": 0,
+      "_note": "Erick 60m, 10:16:43"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 10:16-10:25)"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 10:16-10:25)"
+    },
+    {
+      "name": "??",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": 0,
+      "lon": 0,
+      "alt": 0,
+      "_note": "INFERÊNCIA FALHOU — TP não detectado (gap 10:16-10:25)"
+    },
+    {
+      "name": "24",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.42717,
+      "lon": -48.75648,
+      "alt": 0,
+      "_note": "Erick 9m, 10:25:17"
+    },
+    {
+      "name": "25",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.40965,
+      "lon": -48.73897,
+      "alt": 0,
+      "_note": "Erick 37m, 10:28:49"
+    },
+    {
+      "name": "26",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.3895,
+      "lon": -48.74611,
+      "alt": 0,
+      "_note": "Erick 41m, 10:31:03"
+    },
+    {
+      "name": "27",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.36746,
+      "lon": -48.73098,
+      "alt": 0,
+      "_note": "Erick 99m, 10:34:50"
+    },
+    {
+      "name": "28",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.36293,
+      "lon": -48.73194,
+      "alt": 0,
+      "_note": "Erick 47m, 10:35:35"
+    },
+    {
+      "name": "29",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.35966,
+      "lon": -48.73262,
+      "alt": 0,
+      "_note": "Erick 71m, 10:36:01"
+    },
+    {
+      "name": "30",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.33284,
+      "lon": -48.7182,
+      "alt": 0,
+      "_note": "Erick ~180m, 10:40-41 [2 hits 220m/135m — centróide]"
+    },
+    {
+      "name": "FP",
+      "type": "FP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -23.32684,
+      "lon": -48.71631,
+      "alt": 0,
+      "_note": "Erick 135m, 10:41:45"
+    }
+  ]
+}

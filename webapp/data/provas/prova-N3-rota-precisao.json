@@ -1,0 +1,23 @@
+{
+  "prova": {
+    "name": "N3 — Navegação em Curva",
+    "type": "n3",
+    "slug": "n3-rota-precisao",
+    "mapSlug": "n3-rota-precisao",
+    "targetMin": 60,
+    "deadline": "",
+    "tz": -3,
+    "maxPoints": 1000,
+    "wHG": 400,
+    "wTG": 200,
+    "wVel": 400,
+    "emax": 300,
+    "tol": 5,
+    "windowMin": 60,
+    "velWindowMin": 0,
+    "scoreModel": "relative",
+    "scale": "1:50000",
+    "teto": 0,
+    "alturaMin": 0
+  }
+}

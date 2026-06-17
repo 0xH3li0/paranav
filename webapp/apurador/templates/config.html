@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Configurar prova — {{ prova.name }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <h4 class="mb-0">Configurar prova — {{ prova.name }}</h4>
+  <span class="badge text-bg-secondary">{{ prova.type|upper }}</span>
+  <a class="btn btn-sm btn-outline-light ms-auto" href="{{ url_for('main.scores', sala=slug) }}">Ver Scores</a>
+</div>
+
+<form method="post">
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card"><div class="card-body">
+        <h6 class="card-title">Raios dos cilindros</h6>
+        <p class="text-secondary small">Aplicados por tipo ao salvar.{% if prova.type=='n2' %} (Referência FAI: SP/FP 200 m, demais 150 m.){% else %} (SP/FP — esta prova só usa cilindros de largada/chegada.){% endif %}</p>
+        <div class="row">
+          <div class="col mb-2"><label class="form-label">Raio SP / FP (m)</label>
+            <input class="form-control" type="number" name="radius_sp_fp" value="{{ radius_sp_fp }}"></div>
+          {% if prova.type=='n2' %}
+          <div class="col mb-2"><label class="form-label">Raio intermediário TP/HG/TG (m)</label>
+            <input class="form-control" type="number" name="radius_intermediate" value="{{ radius_intermediate }}"></div>
+          {% endif %}
+        </div>
+      </div></div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card"><div class="card-body">
+        <h6 class="card-title">Tempo & deadline</h6>
+        <div class="row">
+          {% if prova.type in ['n1','n3'] %}
+          <div class="col mb-2"><label class="form-label">Janela (min) — DQ</label>
+            <input class="form-control" type="number" name="window_min" value="{{ prova.window_min }}"></div>
+          {% endif %}
+          {% if prova.type in ['n1','n2'] %}
+          <div class="col mb-2"><label class="form-label">Tempo-alvo (min)</label>
+            <input class="form-control" type="number" name="target_min" value="{{ prova.target_min }}"></div>
+          {% endif %}
+          <div class="col mb-2"><label class="form-label">Fuso (UTC±)</label>
+            <input class="form-control" type="number" name="tz" value="{{ prova.tz }}"></div>
+        </div>
+        <div class="row">
+          {% if prova.type=='n2' %}
+          <div class="col mb-2"><label class="form-label">Deadline relógio (HH:MM)</label>
+            <input class="form-control" name="deadline" value="{{ prova.deadline }}" placeholder="10:45"></div>
+          {% endif %}
+          {% if prova.type=='n1' %}
+          <div class="col mb-2"><label class="form-label">Score N1</label>
+            <select class="form-select" name="score_model">
+              <option value="relative" {{ 'selected' if prova.score_model=='relative' }}>FAI 3.A1 (NBp/NBmax)</option>
+              <option value="percent" {{ 'selected' if prova.score_model=='percent' }}>Percentual (TP/total)</option>
+            </select></div>
+          {% endif %}
+          <div class="col mb-2"><label class="form-label">Pontos máximos</label>
+            <input class="form-control" type="number" name="max_points" value="{{ prova.max_points }}"></div>
+        </div>
+        {% if prova.type=='n3' %}
+        <p class="text-secondary small mb-0">N3 (Navegação em Curva): pontuação por cobertura do corredor — <span class="badge text-bg-warning">modelo não-calibrado</span>. A largura do corredor é editada no Mapa.</p>
+        {% endif %}
+      </div></div>
+    </div>
+
+    {% if prova.type=='n2' %}
+    <div class="col-lg-6">
+      <div class="card"><div class="card-body">
+        <h6 class="card-title">Pontuação N2 (pesos)</h6>
+        <div class="row">
+          <div class="col mb-2"><label class="form-label">Score HG (máx)</label>
+            <input class="form-control" type="number" name="w_hg" value="{{ prova.w_hg }}"></div>
+          <div class="col mb-2"><label class="form-label">Score TG (máx)</label>
+            <input class="form-control" type="number" name="w_tg" value="{{ prova.w_tg }}"></div>
+          <div class="col mb-2"><label class="form-label">Score Vel (máx)</label>
+            <input class="form-control" type="number" name="w_vel" value="{{ prova.w_vel }}"></div>
+        </div>
+        <div class="row">
+          <div class="col mb-2"><label class="form-label">Emax tempo (s)</label>
+            <input class="form-control" type="number" name="emax" value="{{ prova.emax }}"></div>
+          <div class="col mb-2"><label class="form-label">Tolerância (s)</label>
+            <input class="form-control" type="number" name="tol" value="{{ prova.tol }}"></div>
+          <div class="col mb-2"><label class="form-label">Prazo p/ Vel (min)</label>
+            <input class="form-control" type="number" name="vel_window_min" value="{{ prova.vel_window_min }}"></div>
+        </div>
+      </div></div>
+    </div>
+    {% endif %}
+  </div>
+
+  <details class="mt-2 mb-3">
+    <summary class="text-info">Ajuste fino: raio por ponto (sobrepõe o global)</summary>
+    <div class="table-responsive mt-2">
+    <table class="table table-sm">
+      <thead><tr><th>#</th><th>Nome</th><th>Tipo</th><th style="width:160px">Raio (m)</th></tr></thead>
+      <tbody>
+      {% for pt in prova.points %}
+        <tr><td>{{ loop.index }}</td><td>{{ pt.name }}</td><td><span class="badge text-bg-secondary">{{ pt.type }}</span></td>
+          <td><input class="form-control form-control-sm" type="number" name="radius_{{ loop.index0 }}" value="{{ pt.radius }}"></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </details>
+
+  <button class="btn btn-primary">Salvar configuração</button>
+</form>
+{% endblock %}

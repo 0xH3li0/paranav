@@ -1,0 +1,23 @@
+{
+  "prova": {
+    "name": "N2 — Tempo declarado",
+    "type": "n2",
+    "slug": "n2-tempo-declarado",
+    "mapSlug": "n2-tempo-declarado",
+    "targetMin": 0,
+    "deadline": "",
+    "tz": -3,
+    "maxPoints": 1000,
+    "wHG": 400,
+    "wTG": 200,
+    "wVel": 400,
+    "emax": 300,
+    "tol": 5,
+    "windowMin": 60,
+    "velWindowMin": 0,
+    "scoreModel": "relative",
+    "scale": "1:50000",
+    "teto": 0,
+    "alturaMin": 0
+  }
+}

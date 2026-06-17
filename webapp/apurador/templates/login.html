@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Entrar — Apurador{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5 col-lg-4">
+    <div class="card mt-4 mt-md-5"><div class="card-body p-4">
+      <div class="text-center mb-4">
+        <div style="display:inline-grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#0a2236;font-size:26px;box-shadow:0 0 0 6px rgba(217,119,46,.18);">▲</div>
+        <div style="font-family:var(--font-display);font-weight:800;font-size:30px;color:var(--navy);letter-spacing:.02em;margin-top:.5rem;line-height:1">{{ brand }}</div>
+        <div class="text-secondary" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">{{ tagline }}</div>
+      </div>
+      <h6 class="text-secondary mb-3" style="font-family:var(--font-mono);letter-spacing:.06em;font-size:12px;text-transform:uppercase">Acesso do organizador</h6>
+      <form method="post" action="{{ url_for('auth.login') }}">
+        <div class="mb-3"><label class="form-label">E-mail</label>
+          <input class="form-control" type="email" name="email" required></div>
+        <div class="mb-3"><label class="form-label">Senha</label>
+          <input class="form-control" type="password" name="password" required></div>
+        <button class="btn btn-primary w-100">Entrar</button>
+      </form>
+      <p class="text-secondary small mt-3 mb-1">Dev: admin@apurador.local / admin</p>
+      <hr class="my-2">
+      <p class="small mb-0">É piloto? <a href="{{ url_for('main.igcupload') }}">Enviar meu IGC aqui →</a></p>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

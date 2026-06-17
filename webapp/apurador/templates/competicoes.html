@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Competições — Apurador{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+  <h4 class="mb-0">Competições — ranking geral</h4>
+  <form class="d-flex gap-2 ms-auto" method="get">
+    <select class="form-select form-select-sm" name="comp" onchange="this.form.submit()" style="width:auto">
+      {% for c in comps %}<option value="{{ c.slug }}" {{ 'selected' if c.slug==slug }}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if not comp %}
+  <div class="alert alert-warning">Nenhuma competição encontrada.</div>
+{% else %}
+  <p class="text-secondary small">{{ comp.name }} — {{ provas|length }} prova(s): {% for p in provas %}<span class="badge text-bg-secondary">{{ p.name }}</span> {% endfor %}</p>
+  {% if not ranking %}
+    <div class="alert alert-secondary">Sem tracks nas provas desta competição. Carregue IGCs em “Carregar Tracks”.</div>
+  {% else %}
+  <div class="table-responsive">
+  <table class="table table-sm table-hover align-middle">
+    <thead><tr>
+      <th>#</th><th>BIB</th><th>Piloto</th>
+      {% for p in provas %}<th class="text-end">{{ p.name }}</th>{% endfor %}
+      <th class="text-end">TOTAL</th>
+    </tr></thead>
+    <tbody>
+    {% for r in ranking %}
+      <tr>
+        <td>{% if loop.index==1 %}🥇{% elif loop.index==2 %}🥈{% elif loop.index==3 %}🥉{% else %}{{ loop.index }}{% endif %}</td>
+        <td>{{ r.bib }}</td><td>{{ r.name }}</td>
+        {% for p in provas %}<td class="text-end">{{ r.by_sala.get(p.slug, '—') }}</td>{% endfor %}
+        <td class="text-end"><b>{{ r.total }}</b></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="text-secondary small">Pilotos são casados por BIB entre as provas. O total soma os pontos de cada prova.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

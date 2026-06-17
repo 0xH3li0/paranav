@@ -1,0 +1,350 @@
+{
+  "mapa": {
+    "name": "N2 — Tempo declarado",
+    "slug": "n2-tempo-declarado",
+    "scale": "1:50000",
+    "base": "esri",
+    "teto": 0,
+    "alturaMin": 0,
+    "logo": ""
+  },
+  "points": [
+    {
+      "name": "FXC001",
+      "type": "SP",
+      "radius": 200.0,
+      "weight": 1,
+      "lat": -22.87385,
+      "lon": -42.58651,
+      "alt": 0
+    },
+    {
+      "name": "FXC002",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86446,
+      "lon": -42.57643,
+      "alt": 0
+    },
+    {
+      "name": "FXC003",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.85555,
+      "lon": -42.56701,
+      "alt": 0
+    },
+    {
+      "name": "FXC004",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.84647,
+      "lon": -42.55729,
+      "alt": 0
+    },
+    {
+      "name": "FXC005",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.83752,
+      "lon": -42.5478,
+      "alt": 0
+    },
+    {
+      "name": "FXC006",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.82837,
+      "lon": -42.5381,
+      "alt": 0
+    },
+    {
+      "name": "FXC007",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.81935,
+      "lon": -42.52848,
+      "alt": 0
+    },
+    {
+      "name": "FXC008",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.81027,
+      "lon": -42.51881,
+      "alt": 0
+    },
+    {
+      "name": "FXC009",
+      "type": "TP",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.80111,
+      "lon": -42.50908,
+      "alt": 0
+    },
+    {
+      "name": "FXC010",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.79554,
+      "lon": -42.49979,
+      "alt": 0
+    },
+    {
+      "name": "FXC011",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.79014,
+      "lon": -42.49074,
+      "alt": 0
+    },
+    {
+      "name": "FXC012",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.78474,
+      "lon": -42.48165,
+      "alt": 0
+    },
+    {
+      "name": "TG1",
+      "type": "TG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.77928,
+      "lon": -42.47251,
+      "alt": 0
+    },
+    {
+      "name": "FXC014",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.78293,
+      "lon": -42.46573,
+      "alt": 0
+    },
+    {
+      "name": "FXC015",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.78646,
+      "lon": -42.45921,
+      "alt": 0
+    },
+    {
+      "name": "FXC016",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.78998,
+      "lon": -42.45265,
+      "alt": 0
+    },
+    {
+      "name": "TP2",
+      "type": "TP",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.79359,
+      "lon": -42.446,
+      "alt": 0
+    },
+    {
+      "name": "FXC018",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.81995,
+      "lon": -42.44309,
+      "alt": 0
+    },
+    {
+      "name": "FXC019",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.83007,
+      "lon": -42.44192,
+      "alt": 0
+    },
+    {
+      "name": "FXC020",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.84835,
+      "lon": -42.43991,
+      "alt": 0
+    },
+    {
+      "name": "TG2",
+      "type": "TG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86659,
+      "lon": -42.43786,
+      "alt": 0
+    },
+    {
+      "name": "FXC022",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.87095,
+      "lon": -42.45351,
+      "alt": 0
+    },
+    {
+      "name": "FXC023",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.8753,
+      "lon": -42.46933,
+      "alt": 0
+    },
+    {
+      "name": "FXC024",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.87963,
+      "lon": -42.48499,
+      "alt": 0
+    },
+    {
+      "name": "TP3",
+      "type": "TP",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.88408,
+      "lon": -42.50104,
+      "alt": 0
+    },
+    {
+      "name": "FXC026",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.87667,
+      "lon": -42.5036,
+      "alt": 0
+    },
+    {
+      "name": "FXC027",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86882,
+      "lon": -42.50665,
+      "alt": 0
+    },
+    {
+      "name": "FXC028",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86108,
+      "lon": -42.50957,
+      "alt": 0
+    },
+    {
+      "name": "TG3",
+      "type": "TG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.8529,
+      "lon": -42.5125,
+      "alt": 0
+    },
+    {
+      "name": "FXC030",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.85707,
+      "lon": -42.52226,
+      "alt": 0
+    },
+    {
+      "name": "FXC031",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86124,
+      "lon": -42.53173,
+      "alt": 0
+    },
+    {
+      "name": "FXC032",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86535,
+      "lon": -42.54124,
+      "alt": 0
+    },
+    {
+      "name": "FXC033",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.86955,
+      "lon": -42.55083,
+      "alt": 0
+    },
+    {
+      "name": "FXC034",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.87365,
+      "lon": -42.56046,
+      "alt": 0
+    },
+    {
+      "name": "FXC035",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.8778,
+      "lon": -42.56995,
+      "alt": 0
+    },
+    {
+      "name": "FXC036",
+      "type": "HG",
+      "radius": 150.0,
+      "weight": 1,
+      "lat": -22.88181,
+      "lon": -42.57938,
+      "alt": 0
+    },
+    {
+      "name": "FXC037",
+      "type": "FP",
+      "radius": 200.0,
+      "weight": 1,
+      "lat": -22.88609,
+      "lon": -42.58931,
+      "alt": 0
+    }
+  ],
+  "areas": [],
+  "frame": {},
+  "route": {},
+  "landings": []
+}

@@ -1,0 +1,185 @@
+/* ============================================================
+   Aeronav — sistema de design "carta aeronáutica / instrumento"
+   Stack fixa: Bootstrap 5.3 (claro) + Leaflet. Só CSS.
+   Tipografia: Saira (display) · IBM Plex Sans (corpo) · IBM Plex Mono (dados).
+   ============================================================ */
+:root{
+  --ink:#15212e;          /* texto */
+  --navy:#0d2840;         /* estrutura (navbar, cabeçalhos de tabela) */
+  --navy-2:#163a59;
+  --paper:#f2efe7;        /* fundo "papel de carta" */
+  --paper-2:#e9e4d8;
+  --surface:#fffdf8;      /* cartões */
+  --line:#d8d1c2;         /* hairline quente */
+  --line-2:#c4bba8;
+  --accent:#d9772e;       /* âmbar de sinalização (acento) */
+  --accent-ink:#b35e1d;
+  --link:#1f6090;         /* azul de carta */
+  --muted:#6c7480;
+  --ok:#2e9e4f; --warn:#e0a200; --bad:#d33a2c;
+  --r:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(13,40,64,.06), 0 6px 18px rgba(13,40,64,.06);
+  --font-display:"Saira", system-ui, sans-serif;
+  --font-body:"IBM Plex Sans", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, monospace;
+}
+
+*{ scrollbar-color: var(--line-2) transparent; }
+body{
+  font-family:var(--font-body); font-size:14px; color:var(--ink);
+  background-color:var(--paper);
+  /* textura sutil: grade de carta + leve papel */
+  background-image:
+    linear-gradient(rgba(13,40,64,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13,40,64,.035) 1px, transparent 1px),
+    radial-gradient(circle at 100% 0, rgba(217,119,46,.05), transparent 42%);
+  background-size:26px 26px, 26px 26px, 100% 100%;
+}
+
+/* ---------- tipografia ---------- */
+h1,h2,h3,h4,h5,h6,.navbar-brand{ font-family:var(--font-display); letter-spacing:-.01em; }
+h4,h5{ color:var(--navy); font-weight:700; }
+.text-secondary{ color:var(--muted)!important; }
+.font-mono,.leaflet-container .scale,code,kbd{ font-family:var(--font-mono); }
+
+/* barra de acento à esquerda dos títulos */
+.container-fluid h4:not(.no-bar){ position:relative; padding-left:14px; }
+.container-fluid h4:not(.no-bar)::before{
+  content:""; position:absolute; left:0; top:2px; bottom:2px; width:4px; border-radius:3px;
+  background:linear-gradient(var(--accent), var(--accent-ink));
+}
+
+/* ---------- navbar (instrumento) ---------- */
+.app-nav{
+  background:linear-gradient(180deg, #0e2c47, #0a2236);
+  border-bottom:2px solid var(--accent);
+  box-shadow:0 2px 14px rgba(10,34,54,.28);
+}
+.app-nav .container-fluid{ position:relative; }
+.app-nav .navbar-brand{ color:#fff!important; font-weight:800; font-size:1.18rem; letter-spacing:.02em; display:flex; align-items:center; gap:.5rem; }
+.app-nav .navbar-brand .brand-mark{
+  display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%;
+  color:#0a2236; background:var(--accent); font-size:13px; box-shadow:0 0 0 3px rgba(217,119,46,.25);
+}
+.app-nav .nav-link{ color:#cfe0f0!important; font-weight:500; border-radius:7px; padding:.3rem .7rem!important; transition:.15s; }
+.app-nav .nav-link:hover{ color:#fff!important; background:rgba(255,255,255,.08); }
+.app-nav .nav-link.active{ color:#fff!important; background:rgba(217,119,46,.22); }
+/* rótulos de grupo (Preparação / Evento) */
+.app-nav .navbar-text{ color:#7f9bb5!important; font-family:var(--font-mono); font-size:10px!important; letter-spacing:.12em; }
+.app-nav .btn-outline-light{ border-color:rgba(207,224,240,.35); color:#eaf2fb; }
+.app-nav .btn-outline-light:hover{ background:var(--accent); border-color:var(--accent); color:#0a2236; }
+
+/* ---------- botões ---------- */
+.btn{ font-weight:600; border-radius:8px; }
+.btn-primary{ background:var(--navy); border-color:var(--navy); }
+.btn-primary:hover,.btn-primary:focus{ background:var(--navy-2); border-color:var(--navy-2); }
+.btn-success{ background:var(--ok); border-color:var(--ok); }
+.btn-outline-info{ color:var(--link); border-color:var(--link); }
+.btn-outline-info:hover{ background:var(--link); border-color:var(--link); color:#fff; }
+.btn-outline-primary{ color:var(--navy-2); border-color:var(--line-2); }
+.btn-outline-primary:hover,.btn-outline-primary.active{ background:var(--navy); border-color:var(--navy); color:#fff; }
+.btn:focus-visible{ box-shadow:0 0 0 3px rgba(217,119,46,.35); }
+a{ color:var(--link); text-decoration-color:rgba(31,96,144,.35); }
+a:hover{ color:var(--accent-ink); }
+
+/* ---------- cartões / superfícies ---------- */
+.card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); }
+.card-title{ font-family:var(--font-display); color:var(--navy); font-weight:700; }
+.alert{ border-radius:var(--r); border:1px solid var(--line); }
+.alert-info{ background:#eaf2f8; color:#13405a; border-color:#cfe1ee; }
+
+/* ---------- formulários ---------- */
+.form-label{ font-weight:600; color:#3a4654; }
+.form-control,.form-select{ border-color:var(--line-2); border-radius:8px; }
+.form-control:focus,.form-select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(217,119,46,.18); }
+.input-group-text{ background:var(--paper-2); border-color:var(--line-2); color:#3a4654; font-weight:600; }
+
+/* ---------- tabelas ---------- */
+.table thead th{ background:var(--navy); color:#dbe7f3; border-color:var(--navy); font-family:var(--font-mono);
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
+.table > :not(caption) > * > *{ vertical-align:middle; }
+.table-hover tbody tr:hover td{ background:#f3efe5; }
+.table td .text-end, td.text-end{ font-family:var(--font-mono); }
+
+/* ---------- selos ---------- */
+.badge{ font-weight:600; border-radius:7px; }
+.badge.text-bg-secondary{ background:#ece6d9!important; color:#41372a!important; }
+.pill-type{ background:#e7eefb; color:var(--link); border-radius:7px; padding:1px 8px; font-size:11px; font-weight:700; font-family:var(--font-mono); }
+
+/* ---------- mapas / Leaflet ---------- */
+.leaflet-container{ background:#e7eef5; border-radius:var(--r-lg); font-family:var(--font-body); }
+#map{ box-shadow:var(--shadow); }
+.wp-lbl{ background:rgba(255,253,248,.92); border:1px solid var(--line-2); border-radius:6px; padding:0 5px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600; color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12); }
+.wp-lbl::before{ display:none; }
+
+/* editor de mapa — quadro em proporção A3 (tamanho calculado no JS) */
+#mapBox{ width:100%; }
+#mapWrap{ position:relative; box-shadow:var(--shadow); }
+#map{ width:100%; height:100%; box-shadow:none; }
+
+/* barra de ferramentas FLUTUANTE dentro do mapa — 1 LINHA, botões uniformes */
+#toolbar{
+  position:absolute; top:10px; left:10px; right:10px; z-index:5;
+  display:flex; align-items:center; gap:8px; flex-wrap:nowrap; overflow-x:auto;
+  padding:6px 8px; background:rgba(255,253,248,.95); backdrop-filter:blur(6px);
+  border:1px solid var(--line-2); border-radius:12px;
+  box-shadow:0 6px 18px rgba(10,34,54,.22);
+}
+#toolbar .tb-group{ display:flex; align-items:center; gap:5px; padding-right:8px; border-right:1px solid var(--line); flex:0 0 auto; }
+#toolbar .tb-group:last-child{ border-right:0; padding-right:0; }
+.tb-btn{
+  display:inline-flex; align-items:center; gap:5px; height:32px; min-width:32px; justify-content:center;
+  padding:0 9px; font-size:14px; font-weight:600; line-height:1; color:var(--navy);
+  background:#fff; border:1px solid var(--line-2); border-radius:8px; cursor:pointer; transition:.12s; white-space:nowrap;
+}
+.tb-btn:hover{ background:var(--paper); }
+.tb-btn.active{ background:var(--accent); border-color:var(--accent-ink); color:#0a2236; }
+.tb-btn.tb-ar{ color:var(--bad); } .tb-btn.tb-pt{ color:var(--link); } .tb-btn.tb-del{ color:var(--bad); }
+.tb-btn.tb-go{ background:var(--navy); border-color:var(--navy); color:#fff; }
+.tb-btn.tb-ok{ background:var(--ok); border-color:var(--ok); color:#fff; }
+.tb-btn.tb-link{ text-decoration:none; }
+.tb-btn.disabled{ opacity:.5; pointer-events:none; }
+#toolbar .tb-sel{ width:auto; min-width:84px; height:32px; padding:2px 6px; font-size:12px; }
+#toolbar .tb-num{ width:66px; height:32px; padding:2px 6px; font-size:12px; }
+#searchResults .list-group-item{ cursor:pointer; }
+#searchResults .list-group-item:hover{ background:#f3efe5; }
+#fFrameColor{ border:1px solid var(--line-2); }
+
+/* controle de camadas (estilo Google) — quadradinho no canto inferior-esquerdo */
+#layersCtl{ position:absolute; left:10px; bottom:10px; z-index:5; }
+#layersThumb{ width:64px; height:64px; border-radius:10px; border:2px solid #fff; cursor:pointer;
+  background:linear-gradient(135deg,#3a6b35,#244d20); box-shadow:0 2px 8px rgba(0,0,0,.35);
+  display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
+#layersThumb #layersLbl{ width:100%; text-align:center; font-size:9.5px; font-weight:700; color:#fff;
+  background:rgba(10,23,34,.55); padding:1px 0; font-family:var(--font-mono); letter-spacing:.02em; }
+#layersMenu{ position:absolute; left:0; bottom:72px; min-width:160px; background:#fff;
+  border:1px solid var(--line-2); border-radius:10px; box-shadow:var(--shadow); padding:5px; }
+#layersMenu .lay-opt{ display:block; width:100%; text-align:left; border:0; background:transparent;
+  border-radius:7px; padding:6px 9px; font-size:13px; font-weight:600; color:var(--navy); cursor:pointer; }
+#layersMenu .lay-opt:hover{ background:var(--paper); }
+
+/* overlay SVG da folha (recorte + borda) — não captura cliques */
+#folhaSvg{ position:absolute; inset:0; z-index:3; pointer-events:none; }
+#folhaSvg #folhaBox{ vector-effect:non-scaling-stroke; }
+
+/* marcador de ponto — círculo na cor do tipo + NÚMERO/rótulo FORA (ao lado) */
+.wp-pt{ position:relative; width:13px; height:13px; cursor:grab; }
+.wp-pt .wp-dot{ position:absolute; inset:0; border-radius:50%; background:var(--c,#888);
+  border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.4); }
+.wp-pt .wp-name{ position:absolute; left:18px; top:50%; transform:translateY(-50%);
+  background:rgba(255,253,248,.94); border:1px solid var(--line-2); border-radius:6px; padding:0 5px;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink);
+  box-shadow:0 1px 2px rgba(0,0,0,.18); white-space:nowrap; pointer-events:none; }
+
+/* MapLibre: herda o arredondamento do contêiner */
+.maplibregl-map{ border-radius:var(--r-lg); font-family:var(--font-body); }
+
+/* ---------- rodapé ---------- */
+footer{ border-top:1px solid var(--line); margin-top:2rem; font-family:var(--font-mono); font-size:11px;
+  letter-spacing:.04em; color:var(--muted)!important; }
+
+@media print{
+  .navbar, footer, .btn, form{ display:none!important; }
+  body{ background:#fff; color:#000; background-image:none; }
+}

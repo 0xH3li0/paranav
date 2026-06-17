@@ -1,0 +1,11 @@
+Flask==3.0.3
+# servidor WSGI de produção (VPS):
+gunicorn>=21.2
+# geração de relatório/mapa em PDF (opcional):
+# reportlab 4.x exige Python >= 3.9 (usa hashlib md5 usedforsecurity); no 3.8 usar 3.6.x
+reportlab>=4.0; python_version >= "3.9"
+reportlab>=3.6,<4; python_version < "3.9"
+matplotlib>=3.7
+contextily>=1.6
+staticmap>=0.5.7
+Pillow>=10.0

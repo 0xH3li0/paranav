@@ -1,0 +1,195 @@
+{
+  "name": "N1 Paratrike — Demo Paranapanema",
+  "type": "N1",
+  "slug": "n1-paratrike-demo",
+  "tz": "America/Sao_Paulo",
+  "date": "2025-10-03",
+  "window_min": 60,
+  "emax": 300,
+  "tol": 5,
+  "w_hg": 0,
+  "w_tg": 0,
+  "w_vel": 0,
+  "max_points": 1000,
+  "vel_window_min": 0,
+  "points": [
+    {
+      "type": "SP",
+      "name": "SP",
+      "lat": -23.35558692448058,
+      "lon": -48.73921870358775,
+      "radius": 250,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "1",
+      "lat": -23.3786555697869,
+      "lon": -48.7834995385799,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "2",
+      "lat": -23.37448930572593,
+      "lon": -48.76571748922234,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "3",
+      "lat": -23.38852843144054,
+      "lon": -48.74626456159948,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "4",
+      "lat": -23.36828248573648,
+      "lon": -48.70331041379081,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "5",
+      "lat": -23.37561263648603,
+      "lon": -48.69424358550368,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "6",
+      "lat": -23.39109827924568,
+      "lon": -48.80146413436714,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "7",
+      "lat": -23.41408441706478,
+      "lon": -48.77714739357466,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "8",
+      "lat": -23.42700657709438,
+      "lon": -48.75630523940128,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "9",
+      "lat": -23.40963448655362,
+      "lon": -48.73778200013423,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "10",
+      "lat": -23.41140210526407,
+      "lon": -48.81746147892696,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "11",
+      "lat": -23.43464609471427,
+      "lon": -48.79695034195782,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "12",
+      "lat": -23.38213843348033,
+      "lon": -48.82381132852603,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "13",
+      "lat": -23.38136502418433,
+      "lon": -48.83903651284013,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "14",
+      "lat": -23.43461501917027,
+      "lon": -48.83209290283155,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "15",
+      "lat": -23.44851796928722,
+      "lon": -48.82780127487232,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "16",
+      "lat": -23.45469028478117,
+      "lon": -48.80994283354331,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "17",
+      "lat": -23.46711429890492,
+      "lon": -48.809591513595,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "18",
+      "lat": -23.47077885944668,
+      "lon": -48.79166453533022,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "19",
+      "lat": -23.46784237122982,
+      "lon": -48.77622702721649,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "20",
+      "lat": -23.41664207709334,
+      "lon": -48.86833000163264,
+      "radius": 150,
+      "weight": 1
+    },
+    {
+      "type": "FP",
+      "name": "FP",
+      "lat": -23.36168585985123,
+      "lon": -48.73295342047616,
+      "radius": 250,
+      "weight": 1
+    }
+  ],
+  "_fonte": "demo.paramotorpr.com.br (autorizado por Alan Braga)",
+  "_aviso": "Prova DEMO — pode diferir da prova oficial do 3o Open CABPP Paranapanema 03/10/2025"
+}

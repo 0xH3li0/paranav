@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Enviar IGC — Apurador{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <h4>Enviar IGC (Pilotos)</h4>
+    <p class="text-secondary small">Informe o <b>BIB</b> e o <b>PIN</b>, selecione a <b>Sala</b> e escolha o arquivo <code>.igc</code>. O mapa ao lado mostra a prova; ao escolher o IGC, o trajeto é desenhado antes de enviar.</p>
+    <form method="post" enctype="multipart/form-data">
+      <div class="mb-2"><label class="form-label">Sala</label>
+        <select class="form-select" name="sala" id="sala">
+          <option value="">Selecione...</option>
+          {% for p in provas %}<option value="{{ p.slug }}">{{ p.name }} ({{ p.slug }})</option>{% endfor %}
+        </select></div>
+      <div class="mb-2"><label class="form-label">Arquivo IGC</label>
+        <input class="form-control" type="file" name="igc" id="igcfile" accept=".igc"></div>
+      <div class="row">
+        <div class="col mb-2"><label class="form-label">BIB</label><input class="form-control" name="bib"></div>
+        <div class="col mb-2"><label class="form-label">PIN</label><input class="form-control" name="pin"></div>
+      </div>
+      <button class="btn btn-primary w-100">Enviar</button>
+    </form>
+    <p class="text-secondary small mt-2">Aceita apenas <code>.igc</code>. Deduplica por BIB (substitui se o novo for mais recente).</p>
+  </div>
+  <div class="col-lg-8">
+    <h5>Mapa da prova da Sala</h5>
+    <div id="map" style="height:520px" class="rounded border"></div>
+    <div id="legend" class="small text-secondary mt-2"></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/igcupload.js') }}"></script>
+{% endblock %}

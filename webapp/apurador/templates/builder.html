@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Construtor de Prova — {{ brand }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+  <h4 class="mb-0">Construtor de Prova</h4>
+  <select id="loadProva" class="form-select form-select-sm" style="width:auto">
+    <option value="">— nova prova —</option>
+    {% for p in provas %}<option value="{{ p.slug }}" {{ 'selected' if prova and p.slug==prova.slug }}>{{ p.name }} ({{ p.type|upper }})</option>{% endfor %}
+  </select>
+  <form id="searchForm" class="d-flex gap-1 ms-auto" onsubmit="return false">
+    <input id="searchBox" class="form-control form-control-sm" placeholder="🔎 buscar região (cidade, local)" style="width:240px">
+    <button class="btn btn-sm btn-outline-secondary" id="searchBtn">Ir</button>
+  </form>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div id="map" style="height:620px" class="rounded border"></div>
+    <div class="small text-secondary mt-1" id="hint">Modo: <b id="mode">Ponto</b>. <span id="modeHelp">Clique no mapa para adicionar.</span></div>
+  </div>
+
+  <div class="col-lg-4">
+    <!-- aviso de rascunho não salvo -->
+    <div id="draftBar" class="alert alert-warning py-1 px-2 small d-none mb-2">
+      Há um <b>rascunho não salvo</b> desta prova.
+      <a href="#" id="draftRestore" class="alert-link">Restaurar</a> ·
+      <a href="#" id="draftDiscard" class="alert-link">Descartar</a>
+    </div>
+
+    <!-- 1. PROVA -->
+    <div class="card mb-2"><div class="card-body py-2">
+      <div class="text-uppercase text-secondary small fw-bold mb-1">1 · Prova</div>
+      <div class="row g-2">
+        <div class="col-7"><label class="form-label mb-0 small">Nome</label>
+          <input id="pName" class="form-control form-control-sm" value="{{ prova.name if prova else 'Nova prova' }}"></div>
+        <div class="col-5"><label class="form-label mb-0 small">Tipo</label>
+          <select id="pType" class="form-select form-select-sm">
+            <option value="n1" {{ 'selected' if prova and prova.type=='n1' }}>N1 Nav. Pura</option>
+            <option value="n2" {{ 'selected' if prova and prova.type=='n2' }}>N2 Tempo Decl.</option>
+            <option value="n3" {{ 'selected' if prova and prova.type=='n3' }}>N3 Navegação em Curva</option>
+          </select></div>
+        <div class="col-12"><label class="form-label mb-0 small">Mapa (geometria)</label>
+          <select id="pMap" class="form-select form-select-sm">
+            <option value="">— desenhar geometria aqui (legado) —</option>
+            {% for m in mapas %}<option value="{{ m.slug }}" {{ 'selected' if prova and prova.map_slug==m.slug }}>{{ m.name }} ({{ m.points|length }} pts · {{ m.scale }})</option>{% endfor %}
+          </select>
+          <div class="form-text small" id="mapHelp"></div></div>
+        <div class="col-12 small text-secondary" id="typeHelp"></div>
+      </div>
+    </div></div>
+
+    <div id="mapPreviewNote" class="alert alert-info py-1 px-2 small d-none mb-2"></div>
+
+    <!-- 2. FERRAMENTAS -->
+    <div class="card mb-2" data-geom="1"><div class="card-body py-2">
+      <div class="text-uppercase text-secondary small fw-bold mb-1">2 · Ferramentas</div>
+
+      <div class="input-group input-group-sm mb-2">
+        <span class="input-group-text">Próximo ponto</span>
+        <select id="pNext" class="form-select"></select>
+        <button class="btn btn-outline-primary active" id="mPoint" title="Clique no mapa para adicionar o ponto">+ no mapa</button>
+      </div>
+
+      <div class="btn-group btn-group-sm w-100 mb-1" role="group">
+        <button class="btn btn-outline-danger" id="mProib">Área proibida</button>
+        <button class="btn btn-outline-warning" id="mAten">Área atenção</button>
+      </div>
+
+      <div data-types="n3" class="d-flex gap-1 mt-1 align-items-center flex-wrap">
+        <button class="btn btn-sm btn-outline-info" id="mRoute" title="Traçar a rota/corredor curvo (clique p/ vértices, 2× p/ encerrar)">✚ Rota</button>
+        <div class="input-group input-group-sm" style="width:auto">
+          <span class="input-group-text py-0">corredor (m)</span>
+          <input id="rWidth" type="number" class="form-control" value="300" style="width:72px">
+        </div>
+        <button class="btn btn-sm btn-outline-secondary" id="bRouteClear">Limpar rota</button>
+      </div>
+
+      <details class="mt-2"><summary class="small text-secondary">Elementos extras</summary>
+        <div class="mt-1">
+          <button class="btn btn-sm btn-outline-success" id="mLand" title="Marcador de pouso (3.A3/3.A5)">🛬 Pouso</button>
+        </div>
+      </details>
+      <div class="small text-secondary mt-2">Áreas/rota: clique p/ vértices, <b>duplo-clique</b> encerra. Arraste vértices p/ mover; <b>clique-direito</b> remove vértice/pouso; clique na área remove-a.</div>
+    </div></div>
+
+    <!-- 3. PONTOS -->
+    <div class="card mb-2" data-geom="1"><div class="card-body py-2">
+      <div class="text-uppercase text-secondary small fw-bold mb-1">3 · Pontos</div>
+      <div style="max-height:220px;overflow:auto" class="mb-2">
+        <table class="table table-sm mb-0" id="ptTable"><thead><tr><th>#</th><th>Nome</th><th>Tipo</th><th>Raio</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="d-flex gap-1 flex-wrap">
+        <button class="btn btn-sm btn-outline-secondary" data-types="n1 n2" id="bRenum" title="Renumera os TP em ordem (1..N)">1·2·3 Renumerar TP</button>
+        <button class="btn btn-sm btn-outline-secondary" data-types="n2" id="bGates" title="Gera hidden gates nas pernas (N2)">⚙ Gerar HG</button>
+        <button class="btn btn-sm btn-outline-secondary" data-types="n1" id="bRings" title="2 anéis (centro = ponto médio SP–FP) dividem a prova em 3 faixas dentro da folha A3; peso 1·2·3 cresce com a distância. Defina a folha A3 antes.">◎ Anéis de peso</button>
+        <button class="btn btn-sm btn-outline-secondary" id="bClear">Limpar tudo</button>
+      </div>
+    </div></div>
+
+    <!-- 4. MAPA -->
+    <div class="card mb-2" data-geom="1"><div class="card-body py-2">
+      <div class="text-uppercase text-secondary small fw-bold mb-1">4 · Mapa / parâmetros</div>
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label mb-0 small">Escala</label>
+          <select id="pScale" class="form-select form-select-sm">
+            <option value="1:50000">1:50.000 (2cm/km)</option>
+            <option value="1:100000">1:100.000 (1cm/km)</option>
+            <option value="1:150000">1:150.000</option>
+          </select></div>
+        <div class="col-3"><label class="form-label mb-0 small">Teto (m)</label><input id="pTeto" type="number" class="form-control form-control-sm" value="{{ prova.teto if prova else 0 }}"></div>
+        <div class="col-3"><label class="form-label mb-0 small">Alt. mín</label><input id="pAlt" type="number" class="form-control form-control-sm" value="{{ prova.altura_min if prova else 0 }}"></div>
+        <div class="col-6" data-types="n1 n3"><label class="form-label mb-0 small">Janela (min)</label><input id="pWin" type="number" class="form-control form-control-sm" value="{{ prova.window_min if prova else 60 }}"></div>
+        <div class="col-6"><label class="form-label mb-0 small">Raio SP/FP (m)</label><input id="pRsp" type="number" class="form-control form-control-sm" value="200"></div>
+        <div class="col-6" data-types="n2"><label class="form-label mb-0 small">Raio interm. (TP/HG/TG)</label><input id="pRin" type="number" class="form-control form-control-sm" value="150"></div>
+      </div>
+      <div class="mt-2 pt-2 border-top">
+        <div class="d-flex align-items-center justify-content-between">
+          <b class="small">Folha A3 (área do mapa)</b>
+          <button class="btn btn-sm btn-outline-primary py-0" id="bFrame">Definir folha</button>
+        </div>
+        <div class="small text-secondary mt-1" id="frameInfo">Sem folha. Centralize o mapa e clique "Definir folha".</div>
+        <label class="form-label mb-0 small mt-1">Rotação: <span id="angLbl">0</span>°</label>
+        <input type="range" min="0" max="359" value="0" id="fAngle" class="form-range">
+      </div>
+    </div></div>
+
+    <!-- 5. SALVAR -->
+    <div class="card mb-2"><div class="card-body py-2">
+      <div class="text-uppercase text-secondary small fw-bold mb-1">5 · Salvar / exportar</div>
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" id="bSave">💾 Salvar prova</button>
+        <button class="btn btn-outline-primary btn-sm" id="bSaveAs">Salvar como nova</button>
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-outline-info" id="bKml">⬇ KML</button>
+          <button class="btn btn-outline-info" id="bJson">⬇ JSON</button>
+        </div>
+      </div>
+      <div id="saveMsg" class="small mt-2"></div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>window.PROVA_INIT = {{ (prova.to_dict()|tojson) if prova else 'null' }};</script>
+<script src="{{ url_for('static', filename='js/builder.js') }}"></script>
+{% endblock %}

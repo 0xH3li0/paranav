@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Scores — Apurador{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+  <h4 class="mb-0">Scores</h4>
+  <form class="d-flex gap-2 ms-auto" method="get">
+    <select class="form-select form-select-sm" name="sala" onchange="this.form.submit()" style="width:auto">
+      {% for p in provas %}<option value="{{ p.slug }}" {{ 'selected' if p.slug==slug }}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </form>
+  {% if prova and prova.type=='n2' %}<a class="btn btn-sm btn-outline-info" href="{{ url_for('main.declaracoes', slug=slug) }}">🕐 Declarar tempos</a>{% endif %}
+  {% if prova %}<a class="btn btn-sm btn-outline-light" href="{{ url_for('main.prova_config', slug=slug) }}">⚙ Configurar prova</a>
+  <a class="btn btn-sm btn-outline-light" href="{{ url_for('main.mapa_pdf', slug=slug) }}" title="Mapa A3 em escala fiel">🗺 Mapa A3 (PDF)</a>
+  <a class="btn btn-sm btn-outline-light" href="{{ url_for('main.pontos_pdf', slug=slug) }}" title="Folha A4 com imagens de satélite dos pontos">🛰 Imagens dos pontos (A4)</a>{% endif %}
+</div>
+
+{% if not prova %}
+  <div class="alert alert-warning">Nenhuma prova encontrada em <code>data/provas/</code>.</div>
+{% elif not rows %}
+  <div class="alert alert-secondary">Sala <b>{{ prova.name }}</b> sem tracks. Carregue IGCs em “Carregar Tracks” ou peça aos pilotos para enviarem.</div>
+{% else %}
+  <p class="text-secondary small">{{ prova.name }} — tipo {{ prova.type|upper }}.
+    {% if prova.type=='n1' %}Pontos por TP válidos.
+    {% elif prova.type=='n3' %}Pontos por cobertura do corredor (máx {{ prova.max_points }}). <span class="badge text-bg-warning">modelo não-calibrado</span>
+    {% else %}Score = HG + TG + Vel (máx {{ prova.max_points }}).{% endif %}</p>
+  <div class="table-responsive">
+  <table class="table table-sm table-hover align-middle">
+    <thead><tr>
+      <th>#</th><th>BIB</th><th>Piloto</th>
+      {% if prova.type=='n1' %}
+        <th class="text-end">TP válidos</th><th class="text-end">Tempo SP→FP</th><th class="text-end">Vel (km/h)</th><th>Penalidades</th>
+      {% elif prova.type=='n3' %}
+        <th class="text-end">Cobertura</th><th class="text-end">Saídas</th><th class="text-end">Tempo SP→FP</th><th>Penalidades</th>
+      {% else %}
+        <th class="text-end">TP</th><th class="text-end">HG</th>
+        {% for tg in tg_names %}<th class="text-end">Erro {{ tg }}</th>{% endfor %}
+        {% if fp_name %}<th class="text-end">Erro FP</th>{% endif %}
+        <th class="text-end">Score HG</th><th class="text-end">Score TG</th><th class="text-end">Score Vel</th>
+      {% endif %}
+      <th class="text-end">Pontos</th><th></th>
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ loop.index }}</td><td>{{ r.pilot.bib }}</td><td>{{ r.pilot.name }}</td>
+        {% if prova.type=='n1' %}
+          <td class="text-end">{{ r.ev.counts.TP.valid }}/{{ r.ev.counts.TP.total }}</td>
+          <td class="text-end">{{ r.ev.stats.time_spfp|dur }}</td>
+          <td class="text-end">{{ r.ev.stats.vel|one }}</td>
+          <td>{% for x in r.penal %}<span class="badge text-bg-danger">{{ x }}</span> {% endfor %}</td>
+        {% elif prova.type=='n3' %}
+          <td class="text-end">{{ (r.inside_ratio*100)|one }}%</td>
+          <td class="text-end">{{ r.route_exits if r.route_exits is not none else '—' }}</td>
+          <td class="text-end">{{ r.ev.stats.time_spfp|dur }}</td>
+          <td>{% for x in r.penal %}<span class="badge text-bg-danger">{{ x }}</span> {% endfor %}</td>
+        {% else %}
+          <td class="text-end">{{ r.ev.counts.TP.valid }}</td>
+          <td class="text-end">{{ r.ev.counts.HG.valid }}</td>
+          {% for tg in tg_names %}<td class="text-end">{{ r.tg_errs.get(tg) if r.tg_errs.get(tg) is not none else '—' }}</td>{% endfor %}
+          {% if fp_name %}<td class="text-end">{{ r.tg_errs.get(fp_name) if r.tg_errs.get(fp_name) is not none else '—' }}</td>{% endif %}
+          <td class="text-end">{{ r.s_hg|one }}</td><td class="text-end">{{ r.s_tg|one }}</td><td class="text-end">{{ r.s_vel|one }}</td>
+        {% endif %}
+        <td class="text-end"><b>{{ r.points }}</b></td>
+        <td class="text-nowrap">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.relatorio', slug=slug, bib=r.pilot.bib) }}">Relatório</a>
+          <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.relatorio_pdf', slug=slug, bib=r.pilot.bib) }}" title="Baixar PDF">⬇ PDF</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+{% endif %}
+{% endblock %}

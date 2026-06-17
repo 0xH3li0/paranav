@@ -1,0 +1,24 @@
+[Unit]
+# systemd unit — Aeronav (Apurador de Navegação) atrás de gunicorn.
+# Instalar em /etc/systemd/system/aeronav.service e ajustar User/paths.
+Description=Aeronav — Apurador de Navegação (Flask/gunicorn)
+# Depende do Docker: o bind padrão (172.19.0.1) é o gateway da rede "proxy"
+# onde roda o cloudflared. Sem o Docker no ar, esse IP não existe.
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=root
+# Diretório onde está o pacote `apurador/` (a pasta webapp/ do repo):
+WorkingDirectory=/opt/aeronav/webapp
+EnvironmentFile=/opt/aeronav/aeronav.env
+# gunicorn no venv dedicado. Escuta em APURADOR_BIND (ver aeronav.env):
+#   - Cloudflare Tunnel em Docker  -> 172.19.0.1:8050 (gateway da rede "proxy")
+#   - nginx/host                    -> 127.0.0.1:8050
+ExecStart=/opt/aeronav/venv/bin/gunicorn -w 2 -b ${APURADOR_BIND} --timeout 120 "apurador:create_app()"
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

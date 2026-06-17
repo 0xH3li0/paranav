@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+webapp/.venv/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# provas de teste geradas pelo construtor (manter só as oficiais)
+webapp/data/provas/prova-teste*.json
+
+# runtime de produção — NUNCA versionar (estado vivo do VPS)
+*.db
+webapp/data/aeronav.db
+webapp/data/captures/
+webapp/relatorios/*.pdf
+
+# segredos do serviço (o .example fica versionado; o real, não)
+aeronav.env
+webapp/aeronav.env
+webapp/deploy/aeronav.env
+.env
+
+# claude
+.claude/

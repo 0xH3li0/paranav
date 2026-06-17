@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Carregar Tracks — Apurador{% endblock %}
+{% block content %}
+<h4>Carregar Tracks (organizador)</h4>
+<p class="text-secondary small">Envie vários arquivos <code>.igc</code> de uma vez para uma Sala. Deduplica por BIB.</p>
+<form method="post" enctype="multipart/form-data" class="col-lg-6">
+  <div class="mb-2"><label class="form-label">Sala</label>
+    <select class="form-select" name="sala">
+      {% for p in provas %}<option value="{{ p.slug }}">{{ p.name }} ({{ p.slug }})</option>{% endfor %}
+    </select></div>
+  <div class="mb-2"><label class="form-label">Arquivos IGC</label>
+    <input class="form-control" type="file" name="igcs" accept=".igc" multiple></div>
+  <button class="btn btn-primary">Carregar e apurar</button>
+</form>
+{% endblock %}

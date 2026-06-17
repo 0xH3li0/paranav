@@ -1,0 +1,251 @@
+{
+  "name": "ECOLIGHT — Demo Paranapanema",
+  "type": "N2",
+  "slug": "ecolight-demo",
+  "tz": "America/Sao_Paulo",
+  "date": "2025-10-03",
+  "window_min": 60,
+  "emax": 300,
+  "tol": 5,
+  "w_hg": 400,
+  "w_tg": 400,
+  "w_vel": 200,
+  "max_points": 400,
+  "vel_window_min": 0,
+  "points": [
+    {
+      "type": "SP",
+      "name": "SP",
+      "lat": -23.34686,
+      "lon": -48.73315999999999,
+      "radius": 400,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5002",
+      "lat": -23.35655,
+      "lon": -48.75160000000001,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5003",
+      "lat": -23.36559,
+      "lon": -48.76932,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5004",
+      "lat": -23.37463,
+      "lon": -48.78692,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5005",
+      "lat": -23.38388,
+      "lon": -48.805,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5006",
+      "lat": -23.39309,
+      "lon": -48.82286000000001,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5007",
+      "lat": -23.40248,
+      "lon": -48.84092,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5008",
+      "lat": -23.41169,
+      "lon": -48.85878,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "TP1",
+      "lat": -23.42127,
+      "lon": -48.87725,
+      "radius": 400,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5010",
+      "lat": -23.43013,
+      "lon": -48.86474,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5011",
+      "lat": -23.43902,
+      "lon": -48.8522,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5012",
+      "lat": -23.44837,
+      "lon": -48.83908,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5013",
+      "lat": -23.45677,
+      "lon": -48.82697999999999,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5014",
+      "lat": -23.4657,
+      "lon": -48.81439,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5015",
+      "lat": -23.47432,
+      "lon": -48.80214,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5016",
+      "lat": -23.48316000000001,
+      "lon": -48.78999,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "TP2",
+      "lat": -23.49199,
+      "lon": -48.77714999999999,
+      "radius": 400,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5018",
+      "lat": -23.477,
+      "lon": -48.76504,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5019",
+      "lat": -23.46213,
+      "lon": -48.75308,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5020",
+      "lat": -23.44728,
+      "lon": -48.74111,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5021",
+      "lat": -23.43235,
+      "lon": -48.72905,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5022",
+      "lat": -23.41687,
+      "lon": -48.71703999999999,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5023",
+      "lat": -23.40254,
+      "lon": -48.70502999999999,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5024",
+      "lat": -23.3876,
+      "lon": -48.69298,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "TP",
+      "name": "TP3",
+      "lat": -23.37268,
+      "lon": -48.68098,
+      "radius": 400,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5026",
+      "lat": -23.36657,
+      "lon": -48.6913,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5027",
+      "lat": -23.36042,
+      "lon": -48.70165,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "HG",
+      "name": "N5028",
+      "lat": -23.35429,
+      "lon": -48.71199,
+      "radius": 100,
+      "weight": 1
+    },
+    {
+      "type": "FP",
+      "name": "FP",
+      "lat": -23.34815,
+      "lon": -48.72237,
+      "radius": 400,
+      "weight": 1
+    }
+  ],
+  "_fonte": "demo.paramotorpr.com.br (autorizado por Alan Braga)",
+  "_aviso": "Prova DEMO — pode diferir da prova oficial do 3o Open CABPP Paranapanema 03/10/2025"
+}

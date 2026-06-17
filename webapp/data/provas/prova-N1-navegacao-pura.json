@@ -1,0 +1,23 @@
+{
+  "prova": {
+    "name": "N1 — Navegação Pura",
+    "type": "n1",
+    "slug": "n1-navegacao-pura",
+    "mapSlug": "n1-navegacao-pura",
+    "targetMin": 60,
+    "deadline": "",
+    "tz": -3,
+    "maxPoints": 1000,
+    "wHG": 400,
+    "wTG": 200,
+    "wVel": 400,
+    "emax": 300,
+    "tol": 5,
+    "windowMin": 60,
+    "velWindowMin": 0,
+    "scoreModel": "relative",
+    "scale": "1:50000",
+    "teto": 0,
+    "alturaMin": 0
+  }
+}

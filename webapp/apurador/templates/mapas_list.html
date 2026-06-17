@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Mapas — {{ brand }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <h4 class="mb-0">Mapas</h4>
+  <a class="btn btn-primary btn-sm ms-auto" href="{{ url_for('main.mapa_editor') }}">+ Novo mapa</a>
+</div>
+<p class="text-secondary small">Cada mapa guarda a <b>geometria</b> (pontos, áreas, rota, folha A3, escala, teto/altura, logo). Ao montar uma <b>prova</b>, você puxa o mapa desejado.</p>
+
+{% if not mapas %}
+  <div class="alert alert-secondary">Nenhum mapa ainda. Clique <b>+ Novo mapa</b> para criar.</div>
+{% else %}
+<div class="table-responsive">
+<table class="table table-sm table-hover align-middle">
+  <thead><tr><th>Nome</th><th>Escala</th><th class="text-end">Pontos</th><th class="text-end">Áreas</th><th>Rota</th><th></th></tr></thead>
+  <tbody>
+  {% for m in mapas %}
+    <tr>
+      <td><a href="{{ url_for('main.mapa_editor', slug=m.slug) }}">{{ m.name }}</a> <span class="text-secondary small">({{ m.slug }})</span>
+        {% if m.published %}<span class="badge text-bg-success ms-1">✔ publicado</span>{% endif %}</td>
+      <td>{{ m.scale }}</td>
+      <td class="text-end">{{ m.points|length }}</td>
+      <td class="text-end">{{ m.areas|length }}</td>
+      <td>{{ 'sim' if m.route else '—' }}</td>
+      <td class="text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.mapa_editor', slug=m.slug) }}">Editar</a>
+        <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.mapa_pdf_only', slug=m.slug) }}">🗺 A3</a>
+        <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.mapa_pontos_pdf', slug=m.slug) }}">🛰 Pontos</a>
+        <form method="post" action="{{ url_for('main.mapa_delete', slug=m.slug) }}" class="d-inline" onsubmit="return confirm('Excluir o mapa “{{ m.name }}”? Esta ação não pode ser desfeita.');">
+          <button class="btn btn-sm btn-outline-danger" type="submit">🗑 Excluir</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

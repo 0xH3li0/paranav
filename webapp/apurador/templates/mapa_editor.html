@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Editor de Mapa — {{ brand }}{% endblock %}
+{% block content %}
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+
+<div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.mapas') }}">← Mapas</a>
+  <form id="searchForm" class="d-flex gap-1 position-relative" onsubmit="return false" autocomplete="off">
+    <input id="searchBox" class="form-control form-control-sm" placeholder="🔎 Buscar região" style="width:280px" autocomplete="off">
+    <button class="btn btn-sm btn-outline-secondary" id="searchBtn">Ir</button>
+    <div id="searchResults" class="list-group position-absolute shadow-sm d-none" style="top:100%;left:0;width:280px;z-index:1100;max-height:260px;overflow:auto"></div>
+  </form>
+  <span class="small text-secondary" id="hint"></span>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-9">
+    <!-- O mapa é o palco (proporção A3). A barra flutua sobre ele (1 linha). -->
+    <div id="mapBox" class="d-flex justify-content-center">
+      <div id="mapWrap" class="position-relative rounded border overflow-hidden">
+        <div id="map"></div>
+
+        <!-- BARRA DE FERRAMENTAS (flutuante, 1 linha; só após "Fechar mapa") -->
+        <div id="toolbar" class="d-none">
+          <div class="tb-group">
+            <button class="tb-btn" id="bReopen" title="Reabrir para reposicionar a folha / trocar de região">↩</button>
+            <button class="tb-btn tb-del d-none" id="tDelShape" title="Excluir a forma selecionada">🗑</button>
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn tb-pt" id="tPoint" title="Adicionar ponto (clique no mapa; clique de novo no botão p/ sair)">📍</button>
+            <select id="pNext" class="form-select form-select-sm tb-sel" title="tipo do ponto"><option>SP</option><option selected>TP</option><option>FP</option><option>HG</option><option>TG</option></select>
+            <input id="pRadius" type="number" value="200" class="form-control form-control-sm tb-num" title="raio (m)">
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn tb-ar" id="tPoly" title="Área: polígono">⬡</button>
+            <button class="tb-btn tb-ar" id="tRect" title="Área: retângulo">▭</button>
+            <button class="tb-btn tb-ar" id="tCirc" title="Área: círculo">◯</button>
+            <select id="aColor" class="form-select form-select-sm tb-sel" title="cor da área">
+              <option value="proibida">🔴 Proibida</option><option value="atencao">🟡 Atenção</option><option value="livre">🟢 Livre</option>
+            </select>
+            <button class="tb-btn" id="tRoute" title="Rota/corredor (N3)">✚</button>
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn" id="tUndo" title="Desfazer">↶</button>
+            <button class="tb-btn" id="tRedo" title="Refazer">↷</button>
+          </div>
+          <div class="tb-group ms-auto">
+            <button class="tb-btn tb-go" id="bSave" title="Salvar">💾 Salvar</button>
+            <button class="tb-btn tb-ok" id="bPublish" title="Publicar (marca como pronto)">✔ Publicar</button>
+            <a class="tb-btn tb-link disabled" id="bPreview" target="_blank" title="A3 PDF">⤓ PDF</a>
+          </div>
+        </div>
+
+        <!-- (folha desenhada via SVG no JS) -->
+
+        <!-- CONTROLE DE CAMADAS (estilo Google, quadradinho no canto) -->
+        <div id="layersCtl" class="d-none" title="Trocar camada base">
+          <div id="layersThumb"><span id="layersLbl">Satélite</span></div>
+          <div id="layersMenu" class="d-none">
+            <button data-base="esri" class="lay-opt">🛰 Satélite</button>
+            <button data-base="topo" class="lay-opt">🗺 Topográfico</button>
+            <button data-base="osm" class="lay-opt">🛣 OpenStreetMap</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-3">
+    <div id="draftBar" class="alert alert-warning py-1 px-2 small d-none mb-2">
+      <b>Rascunho não salvo.</b> <a href="#" id="draftRestore" class="alert-link">Restaurar</a> · <a href="#" id="draftDiscard" class="alert-link">Descartar</a>
+    </div>
+
+    <!-- ETAPA 1 — Novo Mapa FAI -->
+    <div class="card mb-2" id="createPanel"><div class="card-body py-2">
+      <h6 class="card-title mb-1">Novo Mapa FAI</h6>
+      <p class="small text-secondary">Navegue até a região (a <b>folha acompanha a vista</b>), ajuste escala/orientação e clique <b>Fechar mapa</b>. A partir daí você trabalha só dentro da folha (norte sempre para cima), com zoom para precisão.</p>
+      <div class="row g-2">
+        <div class="col-12"><label class="form-label mb-0 small">Nome do mapa</label><input id="mName" class="form-control form-control-sm" value="{{ mapa.name if mapa else '' }}" placeholder="ex.: Itanhaém A3"></div>
+        <div class="col-6"><label class="form-label mb-0 small">Escala</label>
+          <select id="mScale" class="form-select form-select-sm">
+            <option value="1:50000">1:50.000</option><option value="1:100000">1:100.000</option><option value="1:150000">1:150.000</option>
+          </select></div>
+        <div class="col-6"><label class="form-label mb-0 small">Orientação</label>
+          <select id="mOrient" class="form-select form-select-sm"><option value="paisagem">Paisagem</option><option value="retrato">Retrato</option></select></div>
+        <div class="col-6"><label class="form-label mb-0 small">Base</label>
+          <select id="mBase" class="form-select form-select-sm"><option value="esri">Satélite</option><option value="topo">Topográfico</option><option value="osm">OpenStreetMap</option></select></div>
+        <div class="col-3"><label class="form-label mb-0 small">Teto (m)</label><input id="mTeto" type="number" class="form-control form-control-sm" value="{{ mapa.teto if mapa else 1500 }}"></div>
+        <div class="col-3"><label class="form-label mb-0 small">Alt. mín</label><input id="mAlt" type="number" class="form-control form-control-sm" value="{{ mapa.altura_min if mapa else 50 }}"></div>
+        <div class="col-6"><label class="form-label mb-0 small">Declinação mag.</label><input id="mDecl" class="form-control form-control-sm" placeholder="ex.: 23° 10' W" value="{{ mapa.declinacao if mapa else '' }}"></div>
+      </div>
+      <div class="border-top mt-2 pt-2"><div class="text-uppercase text-secondary small fw-bold mb-1">Evento (rodapé)</div>
+        <div class="row g-2">
+          <div class="col-12"><input id="mOrg" class="form-control form-control-sm" placeholder="Organizador" value="{{ mapa.organizador if mapa else '' }}"></div>
+          <div class="col-12"><input id="mTit" class="form-control form-control-sm" placeholder="Título da prova" value="{{ mapa.titulo if mapa else '' }}"></div>
+          <div class="col-6"><input id="mData" type="date" class="form-control form-control-sm" value="{{ mapa.data if mapa else '' }}"></div>
+          <div class="col-6"><input id="mLocal" class="form-control form-control-sm" placeholder="Local" value="{{ mapa.local if mapa else '' }}"></div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-2 align-items-center">
+        <input type="color" id="fFrameColor" value="#e53935" title="Cor da borda da folha" class="form-control form-control-color form-control-sm" style="width:36px;padding:2px">
+        <span class="small text-secondary" id="frameInfo">A folha acompanha o centro da vista.</span>
+      </div>
+      <div class="d-grid mt-2"><button class="btn btn-primary" id="bCreate">Fechar mapa →</button></div>
+    </div></div>
+
+    <!-- ETAPA 2 — Dados do Mapa -->
+    <div class="card mb-2 d-none" id="dataPanel"><div class="card-body py-2">
+      <h6 class="card-title mb-1">Dados do Mapa</h6>
+      <div class="row g-2">
+        <div class="col-12"><label class="form-label mb-0 small">Nome</label><input id="dName" class="form-control form-control-sm"></div>
+        <div class="col-6"><label class="form-label mb-0 small">Escala</label><input id="dScale" class="form-control form-control-sm" readonly></div>
+        <div class="col-6"><label class="form-label mb-0 small">Orientação</label><input id="dOrient" class="form-control form-control-sm" readonly></div>
+        <div class="col-12"><label class="form-label mb-0 small">Estilo</label>
+          <select id="dStyle" class="form-select form-select-sm"><option value="pontos">Somente pontos</option><option value="pontos_nomes">Pontos + nomes</option><option value="pontos_rota">Pontos + rota</option></select></div>
+        <div class="col-6"><label class="form-label mb-0 small">Teto (m)</label><input id="dTeto" type="number" class="form-control form-control-sm"></div>
+        <div class="col-6"><label class="form-label mb-0 small">Alt. mín (m)</label><input id="dAlt" type="number" class="form-control form-control-sm"></div>
+      </div>
+      <details class="mt-2"><summary class="small text-secondary">Rodapé (evento)</summary>
+        <div class="row g-2 mt-1">
+          <div class="col-12"><input id="dOrg" class="form-control form-control-sm" placeholder="Organizador"></div>
+          <div class="col-12"><input id="dTit" class="form-control form-control-sm" placeholder="Título da prova"></div>
+          <div class="col-6"><input id="dData" type="date" class="form-control form-control-sm"></div>
+          <div class="col-6"><input id="dLocal" class="form-control form-control-sm" placeholder="Local"></div>
+        </div>
+      </details>
+      {% if mapa %}
+      <div class="mt-2"><label class="form-label mb-0 small">Logo do rodapé {% if mapa.logo %}<span class="text-success">(enviado)</span>{% endif %}</label>
+        <form method="post" action="{{ url_for('main.mapa_logo', slug=mapa.slug) }}" enctype="multipart/form-data">
+          <div class="input-group input-group-sm"><input type="file" name="logo" accept=".png,.jpg,.jpeg" class="form-control"><button class="btn btn-outline-secondary">Subir</button></div>
+        </form></div>
+      {% else %}<div class="small text-secondary mt-2">Salve o mapa para enviar o logo.</div>{% endif %}
+      <div class="d-flex justify-content-between mt-2 small">
+        <span>Pontos (<b id="cPts">0</b>)</span><span>Áreas (<b id="cAreas">0</b>)</span>
+      </div>
+      <div style="max-height:200px;overflow:auto" class="mt-1">
+        <table class="table table-sm mb-0" id="ptTable"><thead><tr><th>#</th><th>Nome</th><th>Tipo</th><th>Raio</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="small text-secondary mt-1"><b>Auto-calculados:</b> <span id="autoCalc">—</span></div>
+      <div id="saveMsg" class="small mt-2"></div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/terra-draw@1.0.0/dist/terra-draw.umd.js"></script>
+<script src="https://unpkg.com/terra-draw-maplibre-gl-adapter@1.0.0/dist/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<script>window.MAPA_INIT = {{ (mapa.to_dict()|tojson) if mapa else 'null' }};</script>
+<script src="{{ url_for('static', filename='js/mapa_editor.js') }}"></script>
+{% endblock %}

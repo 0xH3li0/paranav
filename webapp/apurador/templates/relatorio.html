@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Relatório — {{ pilot.name }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+  <h4 class="mb-0">Relatório do voo</h4>
+  <a class="btn btn-sm btn-primary ms-auto" href="{{ url_for('main.relatorio_pdf', slug=prova.slug, bib=pilot.bib) }}">⬇ Baixar PDF</a>
+  <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">🖨 Imprimir</button>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-6"><div class="card"><div class="card-body">
+    <table class="table table-sm mb-0">
+      <tr><td class="text-secondary">Piloto</td><td><b>{{ pilot.name }}</b> (BIB {{ pilot.bib }})</td></tr>
+      <tr><td class="text-secondary">Data</td><td>{{ pilot.date or '—' }}</td></tr>
+      <tr><td class="text-secondary">Decolagem → Pouso</td><td>{{ ev.stats.takeoff|clock(prova.tz) }} → {{ ev.stats.landing|clock(prova.tz) }}</td></tr>
+      <tr><td class="text-secondary">Tempo de voo</td><td>{{ ev.stats.flight|dur }}</td></tr>
+      <tr><td class="text-secondary">Altitude máxima</td><td>{{ ev.stats.max_alt }} m</td></tr>
+    </table></div></div></div>
+  <div class="col-md-6"><div class="card"><div class="card-body">
+    <table class="table table-sm mb-0">
+      <tr><td class="text-secondary">Tempo alvo / deadline</td><td>{{ prova.target_min }} min / {{ prova.deadline or '—' }}</td></tr>
+      <tr><td class="text-secondary">SP / FP cruzados</td><td>{{ 'Sim' if ev.stats.sp_crossed else 'Não' }} / {{ 'Sim' if ev.stats.fp_crossed else 'Não' }}</td></tr>
+      <tr><td class="text-secondary">Tempo SP→FP</td><td>{{ ev.stats.time_spfp|dur }}</td></tr>
+      <tr><td class="text-secondary">Distância SP→FP</td><td>{{ ev.stats.dist_spfp|km }} km · {{ ev.stats.vel|one }} km/h</td></tr>
+    </table></div></div></div>
+</div>
+<h5>Pontos da prova</h5>
+<div class="table-responsive">
+<table class="table table-sm">
+  <thead><tr><th>Nome</th><th>Tipo</th><th class="text-end">Raio</th><th>Cruzado</th><th>Válido</th><th class="text-end">Hora do hit</th><th class="text-end">Dist. ao centro</th></tr></thead>
+  <tbody>
+  {% for pt in points %}
+    {% set r = ev.by_id[loop.index0] %}
+    {% set nav = pt.type in ('SP','FP') %}
+    <tr>
+      <td>{{ pt.name }}</td><td><span class="badge text-bg-secondary">{{ pt.type }}</span></td>
+      <td class="text-end">{{ pt.radius }} m</td>
+      <td>{{ 'Sim' if r.crossed else 'Não' }}</td>
+      <td>{{ '—' if nav else ('Sim' if r.valid and r.crossed else 'Não') }}</td>
+      <td class="text-end">{{ r.hit_t|clock(prova.tz) if r.crossed else '—' }}</td>
+      <td class="text-end">{{ (r.min_d|one) ~ ' m' if (nav and r.crossed) else '—' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

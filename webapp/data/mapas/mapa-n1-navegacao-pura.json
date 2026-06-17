@@ -1,0 +1,197 @@
+{
+  "mapa": {
+    "name": "N1 — Navegação Pura",
+    "slug": "n1-navegacao-pura",
+    "scale": "1:50000",
+    "base": "esri",
+    "teto": 0,
+    "alturaMin": 0,
+    "logo": ""
+  },
+  "points": [
+    {
+      "name": "SP",
+      "type": "SP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8738725,
+      "lon": -42.5865314,
+      "alt": 0
+    },
+    {
+      "name": "1",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8367461,
+      "lon": -42.5706086,
+      "alt": 0
+    },
+    {
+      "name": "2",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8476645,
+      "lon": -42.5545373,
+      "alt": 0
+    },
+    {
+      "name": "3",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8242884,
+      "lon": -42.5337901,
+      "alt": 0
+    },
+    {
+      "name": "4",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8010956,
+      "lon": -42.5090951,
+      "alt": 0
+    },
+    {
+      "name": "5",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.7839833,
+      "lon": -42.4552447,
+      "alt": 0
+    },
+    {
+      "name": "6",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.7936193,
+      "lon": -42.4459957,
+      "alt": 0
+    },
+    {
+      "name": "7",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.7830634,
+      "lon": -42.5136178,
+      "alt": 0
+    },
+    {
+      "name": "8",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.7843152,
+      "lon": -42.5649823,
+      "alt": 0
+    },
+    {
+      "name": "9",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8840691,
+      "lon": -42.5010451,
+      "alt": 0
+    },
+    {
+      "name": "10",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8623036,
+      "lon": -42.5529345,
+      "alt": 0
+    },
+    {
+      "name": "11",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8528839,
+      "lon": -42.5125151,
+      "alt": 0
+    },
+    {
+      "name": "12",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8175224,
+      "lon": -42.4891697,
+      "alt": 0
+    },
+    {
+      "name": "13",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.779258,
+      "lon": -42.4725148,
+      "alt": 0
+    },
+    {
+      "name": "14",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8199043,
+      "lon": -42.5808349,
+      "alt": 0
+    },
+    {
+      "name": "15",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8415878,
+      "lon": -42.4470033,
+      "alt": 0
+    },
+    {
+      "name": "16",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8666046,
+      "lon": -42.4378703,
+      "alt": 0
+    },
+    {
+      "name": "17",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8335387,
+      "lon": -42.5964039,
+      "alt": 0
+    },
+    {
+      "name": "18",
+      "type": "TP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.7680358,
+      "lon": -42.5333183,
+      "alt": 0
+    },
+    {
+      "name": "FP",
+      "type": "FP",
+      "radius": 200,
+      "weight": 1,
+      "lat": -22.8861283,
+      "lon": -42.5893653,
+      "alt": 0
+    }
+  ],
+  "areas": [],
+  "frame": {},
+  "route": {},
+  "landings": []
+}

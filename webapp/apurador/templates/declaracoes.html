@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Declarar tempos — {{ prova.name }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <h4 class="mb-0">Tempos declarados — {{ prova.name }}</h4>
+  <a class="btn btn-sm btn-outline-light ms-auto" href="{{ url_for('main.scores', sala=slug) }}">Ver Scores</a>
+</div>
+<p class="text-secondary small">Tempo declarado de cada piloto em cada gate de tempo e no FP — <b>elapsado desde o SP</b>. Aceita <code>mm:ss</code>, <code>hh:mm:ss</code> ou segundos. Cada piloto declara os seus.</p>
+
+{% if not pilots %}
+  <div class="alert alert-secondary">Sem pilotos nesta Sala. Carregue IGCs primeiro.</div>
+{% elif not timed %}
+  <div class="alert alert-secondary">Esta prova não tem gates de tempo (TG/FP).</div>
+{% else %}
+<form method="post">
+  <div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>BIB / Piloto</th>{% for name in timed %}<th>{{ name }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for p in pilots %}
+      <tr>
+        <td>{{ p.bib }} · {{ p.name }}</td>
+        {% for name in timed %}
+          <td><input class="form-control form-control-sm" style="width:110px"
+                     name="d_{{ loop.index0 }}_{{ name }}"
+                     value="{{ p.decl.get(name)|dur if p.decl.get(name) is not none else '' }}"
+                     placeholder="mm:ss"></td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <button class="btn btn-primary">Salvar declarações</button>
+</form>
+{% endif %}
+{% endblock %}
