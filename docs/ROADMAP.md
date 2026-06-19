@@ -13,6 +13,7 @@ Este documento aplica engenharia de prompts e boas práticas de desenvolvimento 
 5. **Não reintroduzir** o que foi decidido: nada de single-file HTML; stack fixa (Flask+Jinja2+Bootstrap+Leaflet); sem menção a "réplica/cópia".
 6. **Documentar ao terminar:** atualizar `CLAUDE.md`/`docs/EVOLUCAO.md` e a memória quando algo relevante mudar.
 7. **Dados ≠ código:** provas são JSON em `webapp/data/provas/` (slug minúsculo). `provas/` (raiz) guarda só os CSV de referência.
+8. **VPS sempre atualizada:** após mergear, **fazer deploy na VPS `ubuntu-vinhedo`** (`git pull` + `webapp/deploy/update.sh`) para testar/debugar contra o app ao vivo (https://aeronav.helioandre.com). Uma mudança só está "entregue" quando a VPS roda o código novo. Ver `CLAUDE.md` → "Persistência e Deploy".
 
 ## 2. Verificação (rodar antes/depois de mexer no scoring)
 

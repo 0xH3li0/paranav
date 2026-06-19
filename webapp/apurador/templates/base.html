@@ -22,16 +22,27 @@
     <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav me-auto">
         {% if session.get('org') %}
-        <li class="nav-item"><span class="navbar-text small text-uppercase opacity-50 ms-1 me-1">Preparação</span></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.mapas') }}">Mapas</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.builder') }}">Provas</a></li>
-        <li class="nav-item"><span class="navbar-text small text-uppercase opacity-50 ms-2 me-1">Evento</span></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.upload_tracks') }}">Carregar Tracks</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.scores') }}">Scores</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.competicoes') }}">Competições</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.viewer') }}">Viewer</a></li>
+        <li class="nav-item"><a class="nav-link text-uppercase" href="{{ url_for('main.mapas') }}">Mapa</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-uppercase" href="{{ url_for('main.provas') }}" role="button" data-bs-toggle="dropdown">Provas</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('main.provas') }}">Lista de provas</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.scores') }}">Scores</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.viewer') }}">Viewer</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link text-uppercase" href="{{ url_for('main.competicoes') }}">Competições</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-uppercase" href="#" role="button" data-bs-toggle="dropdown">Pilotos</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('main.upload_tracks') }}">Carregar Tracks (organizador)</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.igcupload') }}">Enviar IGC (piloto)</a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link text-uppercase" href="{{ url_for('main.igcupload') }}">Enviar IGC (Piloto)</a></li>
         {% endif %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.igcupload') }}">Enviar IGC (Piloto)</a></li>
       </ul>
       <span class="navbar-text small me-3">{{ tagline }}</span>
       {% if session.get('org') %}

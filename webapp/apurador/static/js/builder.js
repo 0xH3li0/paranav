@@ -91,7 +91,12 @@ function init(){
   window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
 
   if(window.PROVA_INIT){ loadInit(window.PROVA_INIT); }
-  else { loading=false; applyTypeUI(); }
+  else {
+    loading=false; applyTypeUI();
+    // prova nova vinda do modal "Nova Prova" (/builder?map=<slug>): pré-seleciona o mapa.
+    const pre=window.PRESELECT_MAP;
+    if(pre){ const sel=$('#pMap'); if(sel && [...sel.options].some(o=>o.value===pre)){ sel.value=pre; } }
+  }
   applyMapMode();
   checkDraft();
 }

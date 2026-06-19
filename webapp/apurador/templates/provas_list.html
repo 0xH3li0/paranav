@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Provas — {{ brand }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <h4 class="mb-0">Provas</h4>
+  <button class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#novaProvaModal">+ Nova Prova</button>
+</div>
+<p class="text-secondary small">Cada prova <b>puxa um mapa</b> (geometria) e define o <b>tipo</b> e o <b>scoring</b>. Use <b>+ Nova Prova</b> para escolher o mapa de partida.</p>
+
+{% if not provas %}
+  <div class="alert alert-secondary">Nenhuma prova ainda. Clique <b>+ Nova Prova</b> para criar.</div>
+{% else %}
+<div class="table-responsive">
+<table class="table table-sm table-hover align-middle">
+  <thead><tr><th>Nome</th><th>Tipo</th><th>Mapa</th><th></th></tr></thead>
+  <tbody>
+  {% for p in provas %}
+    <tr>
+      <td><a href="{{ url_for('main.builder', slug=p.slug) }}">{{ p.name }}</a> <span class="text-secondary small">({{ p.slug }})</span></td>
+      <td><span class="badge text-bg-secondary">{{ p.type|upper }}</span></td>
+      <td>
+        {% if p.map_slug %}
+          {{ mapas|selectattr('slug','equalto',p.map_slug)|map(attribute='name')|first|default(p.map_slug) }}
+          <span class="text-secondary small">({{ p.map_slug }})</span>
+        {% else %}
+          <span class="badge text-bg-warning">legado (geometria inline)</span>
+        {% endif %}
+      </td>
+      <td class="text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.builder', slug=p.slug) }}">Editar</a>
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('main.scores', sala=p.slug) }}">Scores</a>
+        <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.mapa_pdf', slug=p.slug) }}">🗺 A3</a>
+        <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.pontos_pdf', slug=p.slug) }}">🛰 Pontos</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+<!-- Modal: Nova Prova → escolher um mapa -->
+<div class="modal fade" id="novaProvaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nova Prova — escolha um mapa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        {% if not mapas %}
+          <div class="alert alert-secondary mb-0">Nenhum mapa disponível. <a href="{{ url_for('main.mapa_editor') }}">Crie um mapa primeiro</a> e depois volte aqui.</div>
+        {% else %}
+          <p class="text-secondary small">A geometria vem do mapa escolhido. Você define tipo, pontos e tempos na prova.</p>
+          <div class="list-group">
+            {% for m in mapas %}
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                 href="{{ url_for('main.builder', map=m.slug) }}">
+                <span>{{ m.name }} <span class="text-secondary small">({{ m.slug }})</span></span>
+                <span class="text-secondary small">{{ m.points|length }} pts · {{ m.scale }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
