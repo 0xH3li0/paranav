@@ -133,3 +133,34 @@ FAI **Section 10 Annex 4** (Task Catalogue). Versão em vigor: **2025** (desde 0
 | Relatórios PDF | WeasyPrint ou ReportLab |
 
 A lógica de parsing/scoring do nosso protótipo HTML já foi **validada contra os dados reais** (tempos de voo e contagem de pontos batendo com o paradigma) e porta diretamente para Python.
+
+---
+
+## Telas do paradigma — observação ao vivo (https://demo.paramotorpr.com.br/, jun/2026)
+
+> **[C]** Tudo abaixo foi lido direto da demo ao vivo (**"Apurador 2.1", versão `2.2.0-demo`**). A demo está **sem dados carregados**, então estruturas/labels são confiáveis; comportamento dependente de dados (ex.: presets de score) fica como pergunta aberta.
+
+### IA / rotas
+`Provas` (dropdown: Novo / Salvar / Carregar Prova `/provas/load` / Carregar Track `/upload/tracks` / Carregar Pontos `/upload/provas` / Carregar Espaços Aéreos `/upload/espacos` / Configurar `/config` / Abrir mundo `/viewer?wid=new`) · `Viewer` `/viewer` · `Scores` `/scores` · `Competições` `/competicoes`.
+> Pontos entram por **upload (WPT/KML/CSV)** e pilotos vêm dos **IGCs** — o paradigma **não tem criador de mapa nem cadastro/logbook de piloto**. Nossos módulos **MAPA** e **PILOTOS** (ver `ESCOPO-PRODUTO.md`) são extensões nossas.
+
+### Config (`/config`) — confirma calibrações
+- **Raios globais por tipo:** SP/FP, TP, HG, TG (m) + **override por ponto** (vazio = usa o global) + **Peso** por ponto.
+- **Limite de altitude (m):** "0 desativa".
+- **Declarações:** **`Tol (s) = 5`**, **`Lim (s) = 300`** → idêntico ao nosso `tol=5`, `emax=300`. **[C]**
+- **Tempo de Prova:** `Alvo (min)` + `Tol (min) = 5` + **`Pen. na tol = 50%`** → tolerância graduada (não DQ duro). Ver pendência P2 em `ESCOPO-PRODUTO.md`.
+
+### Scores (`/scores`)
+- **Caps (pesos máx) — defaults de UI:** `TP 400 · HG 400 · DECL/TG 400 · VEL 200`. **São configuráveis por prova.** ⚠️ Esse split (TG 400 / Vel 200) é o **oposto** do calibrado no Paranapanema (TG 200 / Vel 400) — ver bloco N2 no `CLAUDE.md`.
+- **Presets de combinação de termos** (seletor): `TP · TP+ · HG · HG+ · TG · TG+ · TP/HG · TP/HG+ · TG/HG · TG/HG+ · TP/HG/TG/Vel · TP/HG/TG/Vel+`. `TP` = Pura (nosso **N1**); `TP/HG/TG/Vel` = declarada (nosso **N2**). **[I]** O sufixo "+" e os combos intermediários **não têm tooltip na demo** → pergunta aberta (confirmar com Alan/Márcio ou com dados reais). **Não inventar semântica.**
+- **Colunas da tabela [C]:** Nº · Piloto · Arquivo · Decolagem · Pouso · Tempo de voo · Alt máx · SP(hora) · FP(hora) · TPs · HGs · TGs · T SP-FP · SP→FP(min) · Distância · Velocidade · **Decl FP · Voado FP · Erro FP** (FP como ponto de tempo) · Score TG bruto · **Penalidade · DQ** · Score TP · Score HG · Score TG · Score Vel · Soma · **Soma pós penalização** · **Score (1000)**.
+- Ações: `PDF · CSV · Declarar tempos · Configurar prova · Penalidades`. "Penalidades: ON/OFF".
+
+### Viewer (`/viewer`)
+- **Leaflet.** Bases: OSM · Carto (claro) · **Esri (satélite)** · branco.
+- Toggles: **Ver Pontos · Ver Raios · Ver Corredores** · Espaços aéreos **OpenAir**.
+- Marcadores SP/FP/TP/HG/TG, trilha IGC com altitude, **seletor de múltiplos voos**, painel estatístico lateral, export CSV/PDF.
+> "Ver Corredores" mostra que **corredor de prova tem precedente no paradigma** — embora nosso **N3 siga não-calibrado** (falta relatório real). **[C]**
+
+### Competições (`/competicoes`)
+- Lista: `ID · Nome · Criada em · Ações (Abrir/Excluir)` + botão `+ Criar`. Exemplos na demo: **Light · Paratrike · Paramotor · Gincana** (categorias). Board por competição não inspecionado (sem dados).
