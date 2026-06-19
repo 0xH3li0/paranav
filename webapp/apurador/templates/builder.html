@@ -41,7 +41,7 @@
           </select></div>
         <div class="col-12"><label class="form-label mb-0 small">Mapa (geometria)</label>
           <select id="pMap" class="form-select form-select-sm">
-            <option value="">— desenhar geometria aqui (legado) —</option>
+            {% if prova and not prova.map_slug %}<option value="">— geometria inline (prova legada) —</option>{% endif %}
             {% for m in mapas %}<option value="{{ m.slug }}" {{ 'selected' if prova and prova.map_slug==m.slug }}>{{ m.name }} ({{ m.points|length }} pts · {{ m.scale }})</option>{% endfor %}
           </select>
           <div class="form-text small" id="mapHelp"></div></div>
@@ -141,6 +141,9 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script>window.PROVA_INIT = {{ (prova.to_dict()|tojson) if prova else 'null' }};</script>
+<script>
+window.PROVA_INIT = {{ (prova.to_dict()|tojson) if prova else 'null' }};
+window.PRESELECT_MAP = {{ preselect_map|tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/builder.js') }}"></script>
 {% endblock %}

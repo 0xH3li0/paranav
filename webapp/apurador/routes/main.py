@@ -271,13 +271,24 @@ def mapa_pontos_pdf(slug):
                      download_name=f"pontos-{slug}.pdf")
 
 
+@bp.route("/provas")
+@login_required
+def provas():
+    """Lista de provas (aba PROVAS). 'Nova Prova' abre modal que escolhe um mapa."""
+    return render_template("provas_list.html",
+                           provas=storage.list_provas(), mapas=storage.list_mapas())
+
+
 @bp.route("/builder")
 @bp.route("/builder/<slug>")
 @login_required
 def builder(slug=None):
     provas = storage.list_provas()
     prova = storage.get_prova(slug) if slug else None
-    return render_template("builder.html", provas=provas, prova=prova, mapas=storage.list_mapas())
+    # prova nova pode vir pré-vinculada a um mapa via ?map=<slug> (modal "Nova Prova")
+    preselect_map = request.args.get("map", "") if not prova else ""
+    return render_template("builder.html", provas=provas, prova=prova,
+                           mapas=storage.list_mapas(), preselect_map=preselect_map)
 
 
 @bp.route("/builder/save", methods=["POST"])
@@ -294,6 +305,11 @@ def builder_save():
     tipo = (p.get("type") or "n1").lower()
     map_slug = (p.get("mapSlug") or p.get("map_slug") or "").strip()
     errs = []
+    # G2: toda prova NOVA precisa puxar um mapa. Provas legadas (já têm slug) seguem
+    # editáveis com geometria inline — não regride o que já existe.
+    incoming_slug = (p.get("slug") or "").strip()
+    if not incoming_slug and not map_slug:
+        errs.append("Toda prova nova precisa referenciar um mapa.")
     if map_slug:
         mp = storage.get_mapa(map_slug)
         if not mp:
