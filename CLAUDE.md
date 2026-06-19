@@ -2,13 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> **Antes de codar, leia:** `docs/README.md` (índice + hierarquia de autoridade), depois `docs/ROADMAP.md` (regras de trabalho com IA + backlog com critérios de aceite), `docs/EVOLUCAO.md` (histórico/decisões) e `docs/ARQUITETURA-PARADIGMA.md`. **Regra de ouro:** não quebrar as calibrações — validar contra os dados reais (`igcs/` + `relatorios-paradigmas/`) antes e depois de mexer no scoring.
+> **Antes de codar, leia:** `docs/README.md` (índice + hierarquia de autoridade), `docs/ESCOPO-PRODUTO.md` (**o que** construir — IA dos 4 módulos), depois `docs/ROADMAP.md` (regras de trabalho com IA + backlog com critérios de aceite), `docs/EVOLUCAO.md` (histórico/decisões) e `docs/ARQUITETURA-PARADIGMA.md`. **Regra de ouro:** não quebrar as calibrações — validar contra os dados reais (`igcs/` + `relatorios-paradigmas/`) antes e depois de mexer no scoring.
 >
-> ⚠️ **`docs/BRIEFING-CLIENTE.md` e `docs/MODELO-DADOS-PROPOSTO.md` são VISÃO DE PRODUTO, não instrução de código.** Contêm defaults genéricos do FAI que divergem das calibrações (ex.: Emax 180 ≠ 300 calibrado) e códigos de microleve (`2.A1`) — este apurador é paramotor (**Part 3**: N1=`3.A1`, N2=`3.A6`). Em conflito, vale o estado atual. Ver `docs/README.md`.
+> ⚠️ **Atenção a defaults genéricos do FAI** que divergem das calibrações (ex.: Emax 180 ≠ **300 calibrado**) e a códigos de microleve (`2.A1`) — este é paramotor (**Part 3**: N1=`3.A1`, N2=`3.A6`). Em conflito, vale o **estado atual calibrado**. Escopo do produto: `docs/ESCOPO-PRODUTO.md`.
 
 ## O que é
 
-Apurador de provas de **navegação de paramotor**, espelhando o "Apurador 2.1 / Paradigma" (cursoaita.alanbraga.app.br) de Alan Braga. UI/labels em português (BR).
+Plataforma de **navegação de paramotor** com **dois pilares**: um **Criador de Mapas** (editor do organizador, feito do zero) + um **Apurador de Provas** (scoring a partir do IGC, espelhando o paradigma **https://demo.paramotorpr.com.br/**). UI/labels em português (BR).
+
+**IA canônica = 4 módulos em sequência: `MAPA → PROVAS → COMPETIÇÕES → PILOTOS`** (alinhamento com o Márcio, 16/06/2026). Detalhe e gaps código×escopo em **`docs/ESCOPO-PRODUTO.md`** (fonte da verdade de *escopo*). Regra de separação: **aba MAPA só tem mapas crus editáveis**; prova vive na **aba PROVAS** (lista + "Nova Prova" → escolhe um mapa).
 
 **Entregável atual: app web Flask em `webapp/`** — réplica com a **mesma stack do paradigma** (Python + **Flask + Jinja2**, **Bootstrap 5.3.3**, **Leaflet 1.9.4**). Provas em **arquivos JSON** (dev) ou **SQLite** (produção). **Mapa × Prova são separados:** um **Mapa** guarda a geometria (pontos, áreas, rota, folha A3, escala, teto/altura, logo); a **Prova** referencia um mapa via `map_slug` + scoring. Salas: **N1 (Navegação Pura)**, **N2 (Tempo Declarado)** e **N3 (Navegação em Curva / Curve Navigation — corredor curvo, estende o paradigma)**.
 
@@ -17,7 +19,7 @@ Apurador de provas de **navegação de paramotor**, espelhando o "Apurador 2.1 /
 ## Arquivos principais
 
 - **`webapp/`** — a aplicação Flask (entregável). Ver `webapp/README.md`.
-- **`docs/`** — documentação. Índice e hierarquia em `docs/README.md`. Estado atual: `ROADMAP.md` (guia de dev + backlog), `EVOLUCAO.md` (histórico), `ARQUITETURA-PARADIGMA.md` (engenharia reversa); produção de mapa: `CONSTRUTOR-PLANO.md`, `ESPEC-PRODUCAO-MAPAS.md`; visão de produto (subordinada): `BRIEFING-CLIENTE.md`, `MODELO-DADOS-PROPOSTO.md`.
+- **`docs/`** — documentação. Índice e hierarquia em `docs/README.md`. Escopo do produto: `ESCOPO-PRODUTO.md` (IA dos 4 módulos). Estado atual: `ROADMAP.md` (guia de dev + backlog), `EVOLUCAO.md` (histórico), `ARQUITETURA-PARADIGMA.md` (engenharia reversa); produção de mapa: `CONSTRUTOR-PLANO.md`, `ESPEC-PRODUCAO-MAPAS.md`.
 - **`webapp/data/provas/*.json`** — provas (CANÔNICO; o app lê daqui). `provas/` (raiz) guarda só os **CSV de referência** da extração.
 - **`igcs/`** — IGCs reais: `igcs/*.igc` (Venet/Melk/Leandro/Paulo — calibração sagrada N1/N2) + `igcs/3o-open-paranapanema-2025/` (**50 pseudo-IGCs** do 3º Open CABPP Paranapanema 2025 em 8 salas: n1/n2/n4/n5/economia-classica/economia-light/e5/preciso-light, extraídos do Apurador 2.2). **`relatorios-paradigmas/`** — relatórios do paradigma (referência de validação) + `paranapanema-2025-scores.md` (ranking completo do Apurador 2.2 — 3 categorias). **`relatorios/`** — PDFs gerados pelo app. **`Regulamento/`** — FAI Annex 4 2025.
 - **`Iniciar-Aeronav.command`** — atalho macOS para subir o app (porta 5050).

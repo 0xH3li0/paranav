@@ -33,6 +33,20 @@ App de pé: `cd webapp && python run.py` → http://localhost:5050 (login admin@
 
 ## 3. Backlog priorizado (cada item com Definition of Done)
 
+### 🎯 Alinhamento de escopo — IA dos 4 módulos (prioridade)
+> Fonte: `docs/ESCOPO-PRODUTO.md` (Márcio, 16/06). Alvo: nav `MAPA · PROVAS · COMPETIÇÕES · PILOTOS`. **Não tocar nas calibrações N1/N2** ao mexer (validate.py verde antes/depois).
+
+- **G1 — Aba PROVAS = lista + "Nova Prova" (modal de mapa).** Hoje "Provas" abre o `/builder` direto.
+  - **Aceite:** `/provas` mostra a lista das provas salvas; "Nova Prova" abre modal que lista mapas; ao escolher, cai no builder já com o mapa carregado.
+- **G2 — Aposentar o "modo legado" do builder (desenho inline sem mapa).** Toda prova puxa um mapa.
+  - **Aceite:** não há caminho de criar prova sem mapa; provas antigas sem `map_slug` continuam abrindo (compat).
+- **G3 — Módulo PILOTOS.** Hoje só "Enviar IGC" + pilotos em memória/BIB.
+  - **Aceite:** cadastro de piloto; **logbook** de IGCs por piloto; seleção de IGC para uma prova; **replay** do voo; tela de infos do voo (decolagem/pouso/tempo/alt máx).
+- **G4 — Módulo COMPETIÇÕES com conteúdo do Márcio.** Hoje a aba é rasa.
+  - **Aceite:** reservar mapa (impressão); puxar catálogo de pontos; puxar provas; inscrever pilotos do cadastro; definir data.
+- **G5 — Renomear a nav para a sequência canônica.** Scores vira visão de resultado; "Enviar IGC" migra para PILOTOS.
+  - **Aceite:** navbar = `MAPA · PROVAS · COMPETIÇÕES · PILOTOS`.
+
 ### ✅ Concluído (junho/2026)
 - **Separação Mapa × Prova + Editor de Mapa (Geoman).** Entidade `Mapa` (geometria: pontos/áreas/rota/folha A3/escala/teto/altura/logo) separada da `Prova` (`map_slug` + scoring). `get_prova()` **hidrata** a geometria → scoring/PDFs inalterados (regressão verde). Editor `/mapas` com **Leaflet-Geoman** (polígono auto-fechável, áreas verde/vermelho/amarelo, edição de vértices), 2 etapas (escala+folha → desenho), logo no rodapé. Prova **puxa o mapa** (seletor + preview). Migração `migrate.py --split`. Persistência `mapas` em files+sqlite. **N3 renomeado p/ "Navegação em Curva".**
 - **Fase 2 (a fazer) — Análise estilo Earth Pro:** régua (distância + **rumo magnético** via geographiclib/pygeomag, km/NM), **vento** (slider recalcula solo/deriva por perna), **simular voo** (fantasma na rota), **espaço aéreo** (sobreposição).
@@ -77,7 +91,7 @@ Código/artefatos prontos (`webapp/deploy/`). **Pendente no servidor:** definir 
 ---
 
 ### Itens do briefing do cliente (B9+) — visão de produto, fora do foco calibrado
-> Origem: `docs/BRIEFING-CLIENTE.md` / `docs/MODELO-DADOS-PROPOSTO.md`. **Não conflitam** com N1/N2 nem com as calibrações; entram como evolução. Antes de qualquer um, reler `docs/README.md` (hierarquia) e não tocar nos valores sagrados (Emax 300, tol 5, hit = aprox. máxima).
+> Origem: pendências P1–P6 em `docs/ESCOPO-PRODUTO.md`. **Não conflitam** com N1/N2 nem com as calibrações; entram como evolução. Antes de qualquer um, reler `docs/README.md` (hierarquia) e não tocar nos valores sagrados (Emax 300, tol 5, hit = aprox. máxima).
 
 #### B9 — Prova "Curve" (3ª navegação) — BLOQUEADO por P-Curve
 - **Bloqueio:** `Curve Navigation` (2.A1) é prova de **microleve (Part 2)**; em paramotor (Part 3) não há equivalente. Confirmar com o Márcio se quer microleve ou um equivalente paramotor (`3.A2`/`3.A7`) com rota desenhada.
