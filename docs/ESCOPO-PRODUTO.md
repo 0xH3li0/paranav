@@ -72,7 +72,7 @@ A IA acima é o **alvo**; o app ainda não a reflete 100%. Os gaps abaixo são b
 Perguntas abertas (não-conflituosas; herdadas do briefing antigo, que foi removido). Resolver antes de implementar o item de backlog correspondente:
 
 - **P1 — Pura (N1) tem HG?** Coerente com FAI 3.A1 (só coleta) é **não** ter. Modelar sem HG; confirmar.
-- **P2 — Tolerância de tempo (N1):** faixas escalonadas (ex.: 60/65/70 min) **ou** penalidade linear por segundo (modelo FAI)? Hoje há a janela `window_min`. Confirmar o esquema.
+- **P2 — Tolerância de tempo (N1): RESOLVIDO pelo paradigma (verificar implementação).** O Config do paradigma-demo (jun/2026) mostra **`Tempo de Prova: Alvo (min) + Tol (min)=5 + Pen. na tol = 50%`** — ou seja, **tempo-alvo + banda de tolerância + penalidade percentual graduada**, NÃO um DQ duro. **Gap nosso:** o N1 hoje só faz **DQ duro** por `window_min`; falta a penalidade graduada na banda de tolerância. Implementar `target_min` + `tol_min` + `pen_pct` espelhando o paradigma (sem regredir a janela de DQ existente).
 - **P3 — Área vermelha (proibida):** hoje é **só visual**. Deve impactar a apuração (no FAI, voar em proibida zera a prova)? O campo de penalidade já fica previsto, desabilitado.
 - **P4 — Pesos dos termos** (Qh/Qt/Qv): fixos para a competição ou **configuráveis por prova**? (recomendado: configuráveis — já são `w_hg/w_tg/w_vel`.)
 - **P5 — Curve (N3) / desenho de curvas:** formato dos arcos (raio+ângulo, três pontos, Bézier?) e a tolerância espacial em metros equivalente à régua de papel.
