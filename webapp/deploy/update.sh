@@ -17,6 +17,13 @@ if git diff --name-only "$BEFORE" "$AFTER" | grep -q 'webapp/requirements.txt'; 
   "$VENV/bin/pip" install -r webapp/requirements.txt
 fi
 
+# QGIS headless para o Mapa A3 (render server-side, fora do venv). Idempotente.
+if ! command -v qgis >/dev/null 2>&1; then
+  echo "==> instalando QGIS + xvfb (Mapa A3)"
+  sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq || true
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y qgis python3-qgis xvfb gdal-bin
+fi
+
 echo "==> regressão (invariantes sagrados N1/N2/N3)"
 ( cd webapp && "$VENV/bin/python" validate.py )
 
