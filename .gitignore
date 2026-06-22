@@ -17,6 +17,9 @@ webapp/data/aeronav.db
 webapp/data/captures/
 webapp/relatorios/*.pdf
 
+# PDFs de teste/saída soltos na raiz (ex.: _n1.pdf, render de debug do QGIS)
+/_*.pdf
+
 # segredos do serviço (o .example fica versionado; o real, não)
 aeronav.env
 webapp/aeronav.env

@@ -2,6 +2,8 @@
 
 Histórico das decisões e marcos, do protótipo ao estado atual. Serve de contexto para quem (humano ou IA) for continuar o projeto.
 
+> **Estado atual resumido:** ver o fim deste documento ("Estado atual (resumo)") e `docs/README.md`. A linha do tempo abaixo é cronológica — a fase mais recente fica por último.
+
 ## Linha do tempo
 
 ### Fase 0 — Protótipo HTML single-file
@@ -96,6 +98,10 @@ Histórico das decisões e marcos, do protótipo ao estado atual. Serve de conte
 - **Descoberta (exiftool):** os mapas de referência `referencias/N1_AITA.pdf`/`N2_AITA.pdf` são **saídas de QGIS 3.40 Print Layout** do Alan Braga (A3). O **programa do Marcinho deixou de ser referência** (decisão do Helio) — a referência passou a ser o **mapa AITA (QGIS)**.
 - **Decisão:** substituir o A3 do `mappdf.py` (reportlab) por **render QGIS server-side**. Dois spikes na VPS provaram a viabilidade: QGIS 3.10 headless (ARM64, `apt`) renderiza A3 via **PyQGIS + xvfb**; com **CRS 3857** o basemap topo pinta idêntico à AITA, **1:50000 fiel**, rota pelos waypoints, círculos vermelhos rotulados, **HG ocultos**.
 - **Como ficou:** `apurador/qgis_render.py` (standalone PyQGIS, estilo AITA: basemap por `base`, waypoints+rótulos, rota N2/corredor N3, áreas/pousos, A3 retrato/paisagem, escala fiel, **frame rotacionado** = recorte diagonal, rosa-dos-ventos, barra de escala, tarja) + `apurador/qgispdf.py` (wrapper que roda `xvfb-run /usr/bin/python3 qgis_render.py` como **subprocesso**, pois PyQGIS é do python do sistema, não do venv). As rotas `/mapas/<slug>/mapa.pdf` e `/prova/<slug>/mapa.pdf` tentam QGIS e **caem no `mappdf.py`** (fallback) no dev/sem-QGIS. Gate por env **`APURADOR_QGIS=1`**; `update.sh` instala QGIS idempotente. Não toca `core/`.
+
+### Fase 16 — Higiene de arquitetura + reconciliação da documentação (jun/2026)
+- **Refactor sem tocar nas calibrações** (`validate.py` verde e `run_tests.py` 69/71 antes e depois): helpers puros extraídos — `core/slugs.py` (`slugify`/`slug_from_filename`, dedupe de 6 derivações inline) e `pdfcommon.py` (constantes/tiles/zoom dos geradores reportlab; `TYPECOL` morto removido). `gen_report.py` → **`apurador/report.py`** (import relativo, fim do hack de `sys.path`). Rotas de download de PDF isoladas em **`routes/pdf.py`** anexado ao **mesmo blueprint `main`** (endpoints/`url_for` inalterados) — `routes/main.py` caiu de ~476 p/ ~365 linhas. `repo/base.py` Protocol ganhou os 4 métodos de mapa. Credencial dev do `/login` só em `DEBUG`; `.gitignore` cobre PDFs soltos na raiz.
+- **Docs/instruções alinhados ao código:** editor `/mapas` documentado como **MapLibre GL + Terra Draw com rotação** (corrigidos o cabeçalho do `mapa_editor.js` e menções a "Leaflet-Geoman"/"norte fixo"); suíte (`validate.py` + `run_tests.py`) descrita; A3 = QGIS (fallback reportlab); bind real `172.19.0.1:8050`; P-Curve resolvida (= N3). Memória versionada (`memory/apurador-paramotor.md`) reescrita (estava na era single-file / Emax 180).
 
 ## Estado atual (resumo)
 - **N1 e N2 apuram fiel ao paradigma** (números batem ao segundo / casa decimal); **N3** funciona (não-calibrado).

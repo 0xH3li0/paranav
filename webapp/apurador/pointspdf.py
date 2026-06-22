@@ -8,28 +8,15 @@ com indicador de norte por célula.
 Requer rede (busca de tiles) + staticmap + Pillow. Falha graciosa por ponto.
 """
 from __future__ import annotations
-import math
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
-ESRI = ("https://server.arcgisonline.com/ArcGIS/rest/services/"
-        "World_Imagery/MapServer/tile/{z}/{y}/{x}")
-TYPECOL = {"SP": (0.08, 0.50, 0.24), "FP": (0.72, 0.11, 0.11),
-           "TP": (0.18, 0.43, 0.94), "HG": (0.48, 0.32, 0.77), "TG": (0.85, 0.47, 0.02)}
+from .pdfcommon import ESRI_TILES, mpp, zoom_for
+
 IMG_W, IMG_H = 480, 320     # px do recorte de satélite
-
-
-def _mpp(lat, z):
-    return 156543.03392 * math.cos(math.radians(lat)) / (2 ** z)
-
-
-def _zoom_for(lat, ground_m, px):
-    target = ground_m / px
-    z = math.log2(156543.03392 * math.cos(math.radians(lat)) / target)
-    return max(1, min(19, int(math.floor(z))))
 
 
 def _crop(lat, lon, radius, col):
@@ -37,15 +24,15 @@ def _crop(lat, lon, radius, col):
     from staticmap import StaticMap
     from PIL import ImageDraw
     ground = max((radius or 0) * 3.0, 400.0)          # vizinhança > raio (mín. 400 m)
-    z = _zoom_for(lat, ground, IMG_W)
-    m = StaticMap(IMG_W, IMG_H, url_template=ESRI)
+    z = zoom_for(lat, ground, IMG_W)
+    m = StaticMap(IMG_W, IMG_H, url_template=ESRI_TILES)
     img = m.render(zoom=z, center=(lon, lat)).convert("RGB")
-    mpp = _mpp(lat, z)
+    m_per_px = mpp(lat, z)
     cx, cy = IMG_W / 2, IMG_H / 2
     d = ImageDraw.Draw(img)
     rgb = tuple(int(v * 255) for v in col)
-    if radius and radius / mpp > 1:
-        rpx = radius / mpp
+    if radius and radius / m_per_px > 1:
+        rpx = radius / m_per_px
         d.ellipse([cx - rpx, cy - rpx, cx + rpx, cy + rpx], outline=rgb, width=3)
     d.line([cx - 7, cy, cx + 7, cy], fill=rgb, width=2)
     d.line([cx, cy - 7, cx, cy + 7], fill=rgb, width=2)

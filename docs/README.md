@@ -33,7 +33,7 @@ Guia de leitura da pasta `docs/`. **Comece sempre pelo `CLAUDE.md` na raiz** (fo
 
 ## Pendências abertas (confirmar com o cliente)
 
-- **P-Curve** — o briefing pede uma 3ª prova "Curve", mas **`Curve Navigation` (2.A1) é prova de MICROLEVE (Part 2)**; em paramotor (Part 3) não há prova Curve. Confirmar com o Márcio: (a) quer mesmo microleve? (b) ou um equivalente paramotor com rota desenhada — mais próximo de `3.A2` (precision route) / `3.A7` (unknown legs)?
+- **P-Curve — RESOLVIDO.** A 3ª prova foi implementada como **N3 (Navegação em Curva)** = corredor curvo (`prova.route`), mapeada a **FAI 3.A2** (paramotor, Part 3 — `2.A1` é microleve, não se aplica). ⚠️ **Modelo não-calibrado** (sem relatório real; ver ROADMAP B5). Refino opcional com arcos: ROADMAP B9.
 - **P1–P6** — pendências de regra (HG na Pura, tolerância de tempo, área vermelha, pesos dos termos, formato de arcos, API do app do Fabrício). Detalhe em `ESCOPO-PRODUTO.md` → "Pendências de regra".
 
 > Resolvido nesta revisão: **paramotor = FAI Section 10 Annex 4, Part 3** (`3.A1–3.A7`). Confirmado no PDF em `Regulamento/`. Os códigos `2.A1/2.A2…` do briefing são da Part 2 (Microleves) e foram anotados como erro de citação.

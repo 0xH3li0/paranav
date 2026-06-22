@@ -17,7 +17,7 @@
           <input class="form-control" type="password" name="password" required></div>
         <button class="btn btn-primary w-100">Entrar</button>
       </form>
-      <p class="text-secondary small mt-3 mb-1">Dev: admin@apurador.local / admin</p>
+      {% if config.DEBUG %}<p class="text-secondary small mt-3 mb-1">Dev: admin@apurador.local / admin</p>{% endif %}
       <hr class="my-2">
       <p class="small mb-0">É piloto? <a href="{{ url_for('main.igcupload') }}">Enviar meu IGC aqui →</a></p>
     </div></div>

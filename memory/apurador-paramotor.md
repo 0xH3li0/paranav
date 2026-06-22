@@ -1,29 +1,19 @@
 ---
 name: apurador-paramotor
-description: "Projeto do app de apuração de provas de navegação de paramotor (réplica do \"Apurador 2.1\" de Alan Braga)"
+description: "App Flask de apuração de provas de navegação de paramotor (Aeronav) — ponteiros para a documentação canônica"
 metadata: 
   node_type: memory
   type: project
   originSessionId: cbf4af43-051c-4164-91dc-18ceef3ad673
 ---
 
-Helio está construindo um app para apurar provas de navegação de paramotor, espelhando o "Apurador 2.1 / Paradigma" (cursoaita.alanbraga.app.br) de Alan Braga.
+App **Flask** (`webapp/`) para apurar provas de navegação de paramotor, espelhando o paradigma **https://demo.paramotorpr.com.br/** (Apurador 2.x de Alan Braga). Dois pilares: **Criador de Mapas** (editor do organizador) + **Apurador de Provas** (scoring de IGC). Salas N1/N2 (calibradas) e N3 (corredor curvo, não-calibrado).
 
-Pasta do projeto: "Programa de apuração de navegação de provas paramotor".
-- `apurador.html` — versão completa inicial (4 tipos de prova). Substituída pelo foco em navegação.
-- `apurador-navegacao.html` — versão focada em navegação (entregável principal).
+> Esta memória é só **ponteiro** — a fonte da verdade vive no repositório. Não duplicar calibrações aqui (para não contradizer). Em conflito, valem os arquivos abaixo.
 
-Decisões: app web single-file (offline + publicável), em português. Foco em NAVEGAÇÃO primeiro.
+- **Fonte da verdade:** `CLAUDE.md` (stack, calibrações sagradas, convenções, deploy).
+- **Escopo / IA dos 4 módulos:** `docs/ESCOPO-PRODUTO.md` · **Backlog/DoD:** `docs/ROADMAP.md` · **Histórico:** `docs/EVOLUCAO.md` · **Eng. reversa do paradigma:** `docs/ARQUITETURA-PARADIGMA.md` · **Índice/hierarquia:** `docs/README.md`.
 
-Modelo do paradigma (engenharia reversa dos relatórios reais):
-- Tipos de ponto: **SP** (largada), **FP** (chegada), **TP** (turnpoint), **HG** (hidden gate, valida trajeto), **TG** (time gate, confere tempo). Raio e peso por ponto (SP/FP 200m, demais 150m).
-- Salas: **N1 Navegação Pura** (posição/sequência) e **N2 Tempo declarado**.
-- **Score HG = 400 × HG_piloto / melhor_HG** (CONFIRMADO exato).
-- Score N2 = Score HG (máx 400) + Score TG (máx 200) + Score Vel (máx 400) = 1000.
-- Corte de validade: sem cruzar SP/FP/TP → score 0 mesmo com HGs.
-- Fórmulas exatas de Score TG e Score Vel NÃO recuperadas a partir dos dados; implementadas em formato FAI (Emax=180) — precisam de calibração contra a fonte/regulamento.
-- Relatórios são gerados em PDF (voo por piloto + tabela de scores).
+**Regra de ouro:** não quebrar as calibrações N1/N2 — rodar `cd webapp && python3 validate.py` (e `run_tests.py`) antes e depois de mexer no scoring. Os números sagrados (Emax 300, tol 5, raios, hit = aproximação máxima, referências Venet/Melk/Leandro) ficam **só** no `CLAUDE.md`.
 
-Regulamento: Helio tinha o FAI Section 10 Annex 4 de 2020; a versão atual é 2025 (em vigor 01/01/2025).
-
-Parser IGC validado com arquivos reais (Venet, Leandro) — tempos batem exatamente com o paradigma. IGC do Gaggle tem I-record (extensões) após posição 35; parser lê offsets fixos 1-34 corretamente.
+> ⚠️ Histórico (não reintroduzir): o projeto começou como app **HTML single-file** (`apurador*.html`, já removidos → pivô para Flask) e o Emax foi calibrado de **180** (chute FAI inicial) para **300** (confirmado contra dados reais). Nem o single-file nem o Emax 180 voltam.

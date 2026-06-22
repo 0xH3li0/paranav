@@ -9,7 +9,7 @@ Uso:  python3 webapp/run_tests.py      (a partir da raiz do projeto)
 Saída: linha por checagem (OK/FALHA), agrupada por seção, + resumo final.
 """
 from __future__ import annotations
-import os, sys, glob, json, tempfile, math
+import os, sys, glob, tempfile, math
 from io import BytesIO
 
 HERE = os.path.dirname(os.path.abspath(__file__))

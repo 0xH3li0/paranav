@@ -1,7 +1,7 @@
 """Motor de apuração — porta da lógica validada do protótipo HTML.
 
-evaluate(): detecta passagem (1ª entrada no raio) + estatísticas de voo.
-score_prova(): pontuação N1 (TP válidos) ou N2 (HG + TG + Vel = max_points).
+evaluate(): detecta passagem (entrada no raio) + aproximação máxima ao centro + stats.
+score_prova(): pontuação N1 (TP válidos), N2 (HG + TG + Vel) ou N3 (cobertura do corredor).
 """
 from __future__ import annotations
 from typing import Dict, Any, List, Optional
@@ -26,10 +26,11 @@ def evaluate(prova: Prova, pilot: Pilot) -> Dict[str, Any]:
     by_id: Dict[int, Dict[str, Any]] = {}
     # Dois marcadores de tempo por ponto (confirmado contra o paradigma):
     #  - hit_t  = APROXIMAÇÃO MÁXIMA ao centro (instante de menor distância).
-    #             Usado em "Hora do hit", dist. ao centro e tempo SP→FP.
-    #             Bate EXATO com o relatório N1 do paradigma (Δ=0 em 13 pontos).
-    #  - entry_t = 1ª ENTRADA no raio. Usado no tempo dos time gates (Score TG),
-    #             que bate com o "Voado TG" do paradigma (N2).
+    #             Usado em "Hora do hit", dist. ao centro, tempo SP→FP E no tempo
+    #             dos time gates (Score TG). Bate EXATO com o paradigma:
+    #             N1 Venet (Δ=0 em 13 pontos) e N2 Melk (erros 19/6/57/116).
+    #  - entry_t = 1ª ENTRADA no raio. Guardado p/ referência, mas NÃO usado no
+    #             scoring (só marca `crossed`).
     for i, pt in enumerate(prova.points):
         entry_t = None
         min_d = float("inf")

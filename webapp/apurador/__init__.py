@@ -44,6 +44,7 @@ def create_app() -> Flask:
         return resp
 
     from .routes.main import bp as main_bp
+    from .routes import pdf as _pdf_routes  # noqa: F401 — anexa as rotas de PDF ao blueprint main
     from .routes.api import bp as api_bp
     from .routes.auth import bp as auth_bp
     app.register_blueprint(auth_bp)

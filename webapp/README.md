@@ -42,23 +42,30 @@ webapp/
   run.py                      ponto de entrada (dev)
   requirements.txt
   apurador/
-    __init__.py               create_app (Flask factory, filtros Jinja)
+    __init__.py               create_app (Flask factory, filtros Jinja, registra blueprints)
     state.py                  fachada de pilotos por sala (delega ao repo)
-    storage.py                fachada de provas/competições (delega ao repo)
+    storage.py                fachada de provas/mapas/competições (delega ao repo)
     repo/                     backends plugáveis: files_backend, sqlite_backend, migrate, base
     core/
       geo.py                  Haversine + geometria de corredor (N3)
       igc.py                  parser IGC (offsets fixos 1–34; ignora I-record do Gaggle)
-      models.py               Prova (com route N3), Point, Pilot + mapdata()
+      models.py               Mapa + Prova + Point + Pilot + hydrate() + mapdata()
       scoring.py              evaluate() + pontuação N1/N2/N3
+      slugs.py                slugify / slug_from_filename
       timefmt.py              clock/dur (UTC -> local)
+    mappdf.py · pointspdf.py  geradores de PDF reportlab (mapa A3 · folha A4)
+    pdfcommon.py              constantes/tiles/zoom compartilhados pelos geradores reportlab
+    qgis_render.py·qgispdf.py mapa A3 via QGIS (subprocesso; fallback = mappdf)
+    report.py                 PDF de relatório de voo por piloto
     routes/
       auth.py                 login/logout (sessão por cookie)
       api.py                  /api/sala/<slug>/mapdata, /trackdata, /state/reset
-      main.py                 igcupload, viewer, scores, upload/tracks, relatorio
-    templates/                Jinja2 (Bootstrap + Leaflet)
-    static/                   css + js (igcupload, viewer)
+      main.py                 páginas: igcupload, viewer, scores, mapas, builder, relatorio
+      pdf.py                  downloads de PDF (anexa ao blueprint main)
+    templates/                Jinja2 (Bootstrap + Leaflet; editor /mapas = MapLibre+Terra Draw)
+    static/                   css + js (igcupload, viewer, builder, mapa_editor)
   data/provas/                provas em JSON
+  data/mapas/                 mapas (geometria) em JSON
 ```
 
 ## API
@@ -85,7 +92,7 @@ Ver `docs/ROADMAP.md` (backlog priorizado). Construtor (B0–B4), produção de 
 - Opcionais: fundo de satélite no mapa A3; rotação dos recortes A4 pelo ângulo da folha.
 
 ### Mapas × Provas (separados)
-- **Mapa** = geometria reutilizável (pontos, áreas, rota, folha A3, escala, teto/altura, logo). Editor em **`/mapas`** com **Leaflet-Geoman** (polígono auto-fechável p/ áreas verde/vermelho/amarelo, edição de vértices), fluxo em 2 etapas (escala+folha → desenho).
+- **Mapa** = geometria reutilizável (pontos, áreas, rota, folha A3, escala, teto/altura, logo). Editor em **`/mapas`** com **MapLibre GL + Terra Draw** (rotação nativa do terreno; áreas/rota por polígono/retângulo/círculo verde/vermelho/amarelo), fluxo em 2 etapas (escala+folha → desenho). É o **único** ponto do app em MapLibre — viewer/scores/builder seguem Leaflet.
 - **Prova** = puxa um mapa (`map_slug`) + scoring. `get_prova()` hidrata a geometria do mapa, então scoring/PDFs não mudaram. Migração: `python3 -m apurador.repo.migrate --split`.
 
 ### Construtor de prova (`/builder`)

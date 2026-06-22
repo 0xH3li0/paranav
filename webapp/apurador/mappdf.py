@@ -18,9 +18,7 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
-TYPECOL = {"SP": (0.08, 0.50, 0.24), "FP": (0.72, 0.11, 0.11),
-           "TP": (0.18, 0.43, 0.94), "HG": (0.48, 0.32, 0.77), "TG": (0.85, 0.47, 0.02)}
-M_PER_DEG = 111320.0
+from .pdfcommon import M_PER_DEG, TILE_URLS
 
 
 def _denom(scale: str) -> int:
@@ -39,13 +37,6 @@ def _center(prova):
     return sum(lats) / len(lats), sum(lons) / len(lons), 0.0
 
 
-_TILE_URLS = {
-    "topo": ("https://a.tile.opentopomap.org/{z}/{x}/{y}.png", 17),
-    "esri": ("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 19),
-    "osm":  ("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", 19),
-}
-
-
 def _basemap(c, base, lat0, lon0, ang_deg, mpm, cx, cy, area_w, area_h):
     """Fundo do mapa (tiles da base) sob o vetor, em escala fiel. Silencioso se falhar."""
     try:
@@ -53,7 +44,7 @@ def _basemap(c, base, lat0, lon0, ang_deg, mpm, cx, cy, area_w, area_h):
         from PIL import Image
     except Exception:  # noqa
         return
-    url, maxz = _TILE_URLS.get(base or "topo", _TILE_URLS["topo"])
+    url, maxz = TILE_URLS.get(base or "topo", TILE_URLS["topo"])
     cover = math.hypot(area_w / mpm, area_h / mpm)          # metros de solo (cobre folha rotacionada)
     img_px = 1500
     coslat = math.cos(math.radians(lat0))

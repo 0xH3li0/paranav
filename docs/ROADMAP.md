@@ -17,18 +17,10 @@ Este documento aplica engenharia de prompts e boas práticas de desenvolvimento 
 
 ## 2. Verificação (rodar antes/depois de mexer no scoring)
 
-Sem suíte formal; usar o **test client** do Flask. Exemplo de checagem mínima (rodar em `webapp/`):
+Dois harness (rodar em `webapp/`):
 
-```python
-# valida N2 dos 4 pilotos contra o paradigma
-from apurador.core.igc import parse_igc
-from apurador.core.scoring import score_prova
-from apurador.core.models import Pilot
-from apurador import storage
-pr = storage.get_prova("n2-tempo-declarado")
-# ... carregar igcs/*.igc, setar .decl, score_prova(pr, pilotos)
-# Esperado: Melk 1000, Leandro 314, Paulo 0; erros Melk 19/6/57/116.
-```
+- **`python3 validate.py`** — gate de regressão: invariantes geométricos **sagrados** N1/N2/N3 (Venet 11/18 TP + 01:00:47; Melk HG 26; Leandro HG 16; N3 voo exato = 1000 pts). Sem servidor; exit code ≠ 0 se regredir. **Rodar sempre antes e depois de mexer no scoring/dados.**
+- **`python3 run_tests.py`** — suíte ampla (geo, parser, modelos round-trip, scoring, repos files+sqlite, rotas via test client, construtor, PDFs A3/A4, parse dos 50 IGCs do Paranapanema). Hoje passa **69/71** (2 falhas conhecidas: testes de `builder_save` sem mapa, anteriores à regra G2 — atualizar quando G2 fechar).
 
 App de pé: `cd webapp && python run.py` → http://localhost:5050 (login admin@apurador.local / admin).
 
@@ -49,7 +41,7 @@ App de pé: `cd webapp && python run.py` → http://localhost:5050 (login admin@
   - **Aceite:** navbar = `MAPA · PROVAS · COMPETIÇÕES · PILOTOS`.
 
 ### ✅ Concluído (junho/2026)
-- **Separação Mapa × Prova + Editor de Mapa (Geoman).** Entidade `Mapa` (geometria: pontos/áreas/rota/folha A3/escala/teto/altura/logo) separada da `Prova` (`map_slug` + scoring). `get_prova()` **hidrata** a geometria → scoring/PDFs inalterados (regressão verde). Editor `/mapas` com **Leaflet-Geoman** (polígono auto-fechável, áreas verde/vermelho/amarelo, edição de vértices), 2 etapas (escala+folha → desenho), logo no rodapé. Prova **puxa o mapa** (seletor + preview). Migração `migrate.py --split`. Persistência `mapas` em files+sqlite. **N3 renomeado p/ "Navegação em Curva".**
+- **Separação Mapa × Prova + Editor de Mapa.** Entidade `Mapa` (geometria: pontos/áreas/rota/folha A3/escala/teto/altura/logo) separada da `Prova` (`map_slug` + scoring). `get_prova()` **hidrata** a geometria → scoring/PDFs inalterados (regressão verde). Editor `/mapas` hoje em **MapLibre GL + Terra Draw** (rotação nativa; áreas verde/vermelho/amarelo — inicialmente foi Leaflet-Geoman, migrado na Fase 14), 2 etapas (escala+folha → desenho), logo no rodapé. Prova **puxa o mapa** (seletor + preview). Migração `migrate.py --split`. Persistência `mapas` em files+sqlite. **N3 renomeado p/ "Navegação em Curva".**
 - **Fase 2 (a fazer) — Análise estilo Earth Pro:** régua (distância + **rumo magnético** via geographiclib/pygeomag, km/NM), **vento** (slider recalcula solo/deriva por perna), **simular voo** (fantasma na rota), **espaço aéreo** (sobreposição).
 - **Fase 3 (a fazer) — Rota-auto + export:** rota ligando waypoints com distância/rumo por perna; **exportar GPX/WPT** (gpxpy) p/ GPS/XCTrack.
 - **N3 — Curve Navigation (corredor curvo, FAI 3.A2).** Sala `type=n3`: corredor `prova.route={coords,width}` + SP/FP; score = `max_points × inside_ratio`. Geometria aditiva em `core/geo.py`; ramo N3 em `scoring.py`; UI scores/viewer; exemplo `prova-N3-rota-precisao.json`. **⚠️ não-calibrado** (sem dado real — ver B5). N1/N2 intocados. Invariante no `validate.py`.
@@ -63,6 +55,7 @@ App de pé: `cd webapp && python run.py` → http://localhost:5050 (login admin@
 - **B6 — Persistência robusta (SQLite).** Camada `apurador/repo/` plugável (`files`|`sqlite`) + `migrate.py`. Backend `sqlite` faz tracks sobreviverem a restart. Validado (paridade + persistência).
 - **B7 — Publicação online (VPS).** Decidido **VPS `ubuntu-vinhedo`** (não serverless — app stateful). Artefatos em `webapp/deploy/`. Rollout no servidor pendente (definir domínio/tunnel).
 - **`validate.py`** — harness de regressão (§2). Restaurada a prova N1 (sobrescrita por um teste "TESTE BARRETOS").
+- **Higiene de arquitetura + reconciliação de docs (jun/2026).** Helpers extraídos (`core/slugs.py`, `pdfcommon.py`); `gen_report.py` → `apurador/report.py` (import relativo, sem hack de `sys.path`); rotas de PDF isoladas em `routes/pdf.py` (mesmo blueprint `main` → endpoints inalterados); `repo/base.py` Protocol ganhou os métodos de mapa; `TYPECOL` morto removido dos geradores; credencial dev do login só em `DEBUG`. CLAUDE.md/docs/memória alinhados ao código (editor = MapLibre+Terra Draw; suíte `validate.py`+`run_tests.py`; A3 = QGIS). `validate.py` verde · `run_tests.py` 69/71.
 
 ### B1 — Construtor: colocação de pontos (passo 2) ✅ (ver "Concluído")
 
@@ -82,8 +75,8 @@ Recortes north-up (tiles Esri são north-up) com indicador de norte por célula.
 ### B6 — Persistência robusta ✅ (ver "Concluído")
 Backend `sqlite` via `apurador/repo/`. Resta opcional: persistir competições criadas pela UI.
 
-### B7 — Publicação online — rollout pendente
-Código/artefatos prontos (`webapp/deploy/`). **Pendente no servidor:** definir (sub)domínio, escolher rota TLS (Cloudflare Tunnel já ativo no VPS **ou** nginx+certbot), rodar `migrate.py`, subir o systemd e o vhost. Ver `webapp/deploy/README-deploy.md`.
+### B7 — Publicação online ✅ (ver "Concluído")
+No ar em **https://aeronav.helioandre.com** (Cloudflare Tunnel → gunicorn `172.19.0.1:8050` → systemd, backend sqlite). Deploy/atualização via `webapp/deploy/update.sh`. Ver `webapp/deploy/README-deploy.md`.
 
 ### B8 — Autenticação de piloto (BIB/PIN) e gestão de evento
 - **Fazer:** cadastro de pilotos (BIB/PIN), como o paradigma; dedupe por BIB já existe.
@@ -94,10 +87,9 @@ Código/artefatos prontos (`webapp/deploy/`). **Pendente no servidor:** definir 
 ### Itens do briefing do cliente (B9+) — visão de produto, fora do foco calibrado
 > Origem: pendências P1–P6 em `docs/ESCOPO-PRODUTO.md`. **Não conflitam** com N1/N2 nem com as calibrações; entram como evolução. Antes de qualquer um, reler `docs/README.md` (hierarquia) e não tocar nos valores sagrados (Emax 300, tol 5, hit = aprox. máxima).
 
-#### B9 — Prova "Curve" (3ª navegação) — BLOQUEADO por P-Curve
-- **Bloqueio:** `Curve Navigation` (2.A1) é prova de **microleve (Part 2)**; em paramotor (Part 3) não há equivalente. Confirmar com o Márcio se quer microleve ou um equivalente paramotor (`3.A2`/`3.A7`) com rota desenhada.
-- **Fazer (após confirmar):** suportar `RoutePath` (polyline com arcos) no construtor + validação espacial de aderência à rota.
-- **Aceite:** desenhar curva no mapa, salvar e o track ser apurado contra a rota.
+#### B9 — Prova "Curve" com arcos (refino da N3) — opcional
+- **A N3 já existe** (Navegação em Curva, corredor curvo `prova.route`, FAI 3.A2) — ⚠️ **não-calibrada** (ver B5). Este item é o **refino**: suportar `RoutePath` com **arcos** (raio+ângulo / Bézier) além da polilinha atual, com tolerância espacial equivalente à régua de papel (ver P5 em `ESCOPO-PRODUTO.md`).
+- **Aceite:** desenhar curva com arcos no editor, salvar e o track ser apurado contra a rota (sem regredir N1/N2).
 
 #### B10 — Penalidade de backtracking (parametrizável)
 - **Fazer:** detectar virada >90° saindo do corredor/rota ou reentrar antes de sair; penalidade **por prova** (paramotor nav = 100%; microleve = 50%). Não "zera" universal.

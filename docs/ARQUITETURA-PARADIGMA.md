@@ -106,7 +106,7 @@ decolagem/pouso (hora local), tempo de voo, altitude máxima, SP→FP (tempo/dis
 - **Score Vel** (`wVel=400`) — velocidade SP→FP relativa entre *finishers* dentro do deadline; quem passa o FP após o deadline → 0. Estrutura bate (Melk 400, demais 0); **valor exato a confirmar** (só há um valor não-nulo nos dados).
 - **Corte de validade**: sem cruzar SP/FP/TP válidos → score 0 (mesmo com HGs). [C]
 
-> Observação de detecção: nosso parser marca o hit na **1ª entrada no raio**; o paradigma marca ~5–12 s depois (provável **aproximação máxima ao centro** / interpolação). Ajuste fino opcional.
+> Detecção de hit (**RESOLVIDO**): adotamos a **aproximação máxima ao centro** (`hit_t` = instante de menor distância) — bate EXATO com o paradigma (N1 Venet 13 hits Δ0; N2 Melk 19/6/57/116). O `entry_t` (1ª entrada no raio) fica guardado mas **não** é usado no scoring. Detalhe em `CLAUDE.md` → "Pipeline de scoring".
 
 ## 8. Detalhes do IGC
 
@@ -133,6 +133,8 @@ FAI **Section 10 Annex 4** (Task Catalogue). Versão em vigor: **2025** (desde 0
 | Relatórios PDF | WeasyPrint ou ReportLab |
 
 A lógica de parsing/scoring do nosso protótipo HTML já foi **validada contra os dados reais** (tempos de voo e contagem de pontos batendo com o paradigma) e porta diretamente para Python.
+
+> ⚠️ **Nota (histórico):** a tabela acima é a *proposta* da Fase 1. O que foi efetivamente construído difere em alguns pontos — PDFs via **reportlab/QGIS** (não WeasyPrint), **auth por sessão** simples (não Flask-Login/CSRF) e **sqlite3 puro** (não SQLAlchemy). A arquitetura real está em `CLAUDE.md` e `webapp/README.md`.
 
 ---
 

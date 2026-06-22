@@ -1,10 +1,11 @@
-/* Editor de Mapa "Mapas FAI" — MapLibre GL JS + Terra Draw. NORTE SEMPRE PARA CIMA.
+/* Editor de Mapa — MapLibre GL JS + Terra Draw. Referência: mapas AITA (QGIS).
    ----------------------------------------------------------------------------
-   - Sem rotação (bearing=0): mapa, folha A3 e PDF norte-acima (terreno reto).
-   - O #map tem proporção A3; ao "Fechar mapa" a folha PREENCHE o quadro e só ela
-     fica acessível (setMaxBounds + setMinZoom).
-   - Enquanto se POSICIONA (antes de fechar), a folha ACOMPANHA o centro da vista
-     (conserta o bug de ela ficar travada na região de origem); com pontos, ela
+   - ROTAÇÃO LIVRE ao posicionar: o terreno gira (dragRotate) e a folha A3 fica
+     RETA na tela, capturando a faixa girada do solo. `frame.angle` = bearing da
+     vista; a rosa dos ventos aponta o NORTE real (o A3 PDF respeita esse ângulo).
+   - Ao "Fechar mapa" a rotação é TRAVADA mantendo o ângulo capturado; a folha
+     PREENCHE o quadro e só ela fica acessível (setMaxBounds + setMinZoom).
+   - Enquanto se POSICIONA, a folha ACOMPANHA o centro da vista; com pontos, ela
      auto-enquadra o bounding box dos pontos.
    - Terra Draw desenha áreas/rota; pontos são gerenciados aqui (círculo + rótulo
      ao lado, FORA do círculo + anel do raio). Resto do app continua em Leaflet.

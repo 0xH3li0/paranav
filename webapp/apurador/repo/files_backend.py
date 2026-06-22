@@ -8,16 +8,12 @@ import json
 import os
 from typing import Dict, List, Optional
 from ..core.models import Prova, Pilot, Mapa, hydrate
+from ..core.slugs import slug_from_filename
 
 _BASE = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 DATA_DIR = os.path.join(_BASE, "data", "provas")
 COMP_DIR = os.path.join(_BASE, "data", "competicoes")
 MAPAS_DIR = os.path.join(_BASE, "data", "mapas")
-
-
-def _slug_from_filename(fn: str) -> str:
-    base = os.path.splitext(fn)[0]
-    return base.replace("prova-", "").lower()
 
 
 class FilesRepo:
@@ -38,7 +34,7 @@ class FilesRepo:
                     d = json.load(f)
                 prova = Prova.from_dict(d)
                 if not prova.slug:
-                    prova.slug = _slug_from_filename(fn)
+                    prova.slug = slug_from_filename(fn, "prova-")
                 out.append(self._hydrate(prova))
             except Exception as e:  # noqa
                 print(f"[storage] erro lendo {fn}: {e}")
@@ -60,7 +56,7 @@ class FilesRepo:
     def _file_for_slug(self, slug: str) -> str:
         if os.path.isdir(DATA_DIR):
             for fn in os.listdir(DATA_DIR):
-                if fn.endswith(".json") and _slug_from_filename(fn) == slug:
+                if fn.endswith(".json") and slug_from_filename(fn, "prova-") == slug:
                     return os.path.join(DATA_DIR, fn)
         return os.path.join(DATA_DIR, f"prova-{slug}.json")
 
@@ -103,7 +99,7 @@ class FilesRepo:
                 with open(os.path.join(MAPAS_DIR, fn), encoding="utf-8") as f:
                     mp = Mapa.from_dict(json.load(f))
                 if not mp.slug:
-                    mp.slug = os.path.splitext(fn)[0].replace("mapa-", "").lower()
+                    mp.slug = slug_from_filename(fn, "mapa-")
                 out.append(mp)
             except Exception as e:  # noqa
                 print(f"[storage] erro lendo mapa {fn}: {e}")
@@ -117,7 +113,7 @@ class FilesRepo:
         path = os.path.join(MAPAS_DIR, f"mapa-{mapa.slug}.json")
         if os.path.isdir(MAPAS_DIR):
             for fn in os.listdir(MAPAS_DIR):
-                if fn.endswith(".json") and os.path.splitext(fn)[0].replace("mapa-", "").lower() == mapa.slug:
+                if fn.endswith(".json") and slug_from_filename(fn, "mapa-") == mapa.slug:
                     path = os.path.join(MAPAS_DIR, fn)
                     break
         with open(path, "w", encoding="utf-8") as f:
@@ -127,7 +123,7 @@ class FilesRepo:
         if not os.path.isdir(MAPAS_DIR):
             return
         for fn in os.listdir(MAPAS_DIR):
-            if fn.endswith(".json") and os.path.splitext(fn)[0].replace("mapa-", "").lower() == slug:
+            if fn.endswith(".json") and slug_from_filename(fn, "mapa-") == slug:
                 os.remove(os.path.join(MAPAS_DIR, fn))
 
     # ---- pilotos / tracks (em memória) ----

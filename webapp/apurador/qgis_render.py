@@ -30,7 +30,8 @@ from qgis.core import (
 )
 from qgis.PyQt.QtGui import QFont, QColor
 
-# bases de tiles suportadas (mesma intenção do mappdf._TILE_URLS)
+# bases de tiles suportadas (mesma intenção de pdfcommon.TILE_URLS; aqui é
+# duplicado de propósito: este módulo roda no python do SISTEMA, fora do venv)
 _BASES = {
     "topo": ("https://tile.opentopomap.org/{z}/{x}/{y}.png", 17),
     "esri": ("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 19),

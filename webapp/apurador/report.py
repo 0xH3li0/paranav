@@ -1,17 +1,17 @@
 """Gerador de relatório de voo (PDF).
 
 Identidade visual própria (marca configurável em BRAND). Mapa OpenStreetMap
-(staticmap) + selos coloridos (reportlab).
-Uso:
-    python gen_report.py <slug> <igc_path> [saida.pdf] [--bib N] [--decl "TG1=1170,..."]
+(staticmap) + selos coloridos (reportlab). Módulo interno do pacote `apurador`;
+a rota `/relatorio/<slug>/<bib>.pdf` chama `render_report()`.
+Uso (CLI, a partir de `webapp/`):
+    python -m apurador.report <slug> <igc_path> [saida.pdf] [--bib N] [--decl "TG1=1170,..."]
 """
-import sys, os, math, argparse, datetime
-sys.path.insert(0, os.path.dirname(__file__))
-from apurador.core.igc import parse_igc
-from apurador.core.scoring import evaluate, score_prova
-from apurador.core.timefmt import clock, dur, one, km
-from apurador.core.models import Pilot
-from apurador import storage
+import os, math, argparse, datetime
+from .core.igc import parse_igc
+from .core.scoring import evaluate, score_prova
+from .core.timefmt import clock, dur, one, km
+from .core.models import Pilot
+from . import storage
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm

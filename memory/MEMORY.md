@@ -1,3 +1,3 @@
 # Memory Index
 
-- [Apurador Paramotor](apurador-paramotor.md) — projeto do app de apuração de provas de navegação de paramotor (réplica do Apurador 2.1)
+- [Apurador Paramotor](apurador-paramotor.md) — app Flask (Aeronav) de apuração de navegação de paramotor; ponteiros para a doc canônica (CLAUDE.md + docs/)

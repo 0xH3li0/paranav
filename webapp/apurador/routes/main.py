@@ -1,21 +1,21 @@
-"""Páginas: igcupload (público), viewer, scores, relatório (organizador)."""
+"""Páginas: igcupload (público), viewer, scores, mapas, construtor, relatório.
+
+As rotas de download de PDF (mapa A3, folha A4, relatório) ficam em `routes/pdf.py`,
+anexadas a este mesmo blueprint `main`.
+"""
 from __future__ import annotations
+import os
+import uuid
 from flask import (Blueprint, render_template, request, redirect, url_for,
                    current_app, flash, abort, jsonify, session)
 from .. import storage, state
 from ..core.igc import parse_igc
-from ..core.models import Pilot, Mapa
+from ..core.models import Pilot, Mapa, Prova
 from ..core.scoring import score_prova, evaluate, ranking_geral
 from .auth import login_required
+from ..core.slugs import slugify
 
 bp = Blueprint("main", __name__)
-
-
-def _slugify(s, fallback="mapa"):
-    import re as _re
-    import uuid
-    base = _re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-")
-    return base or (fallback + "-" + uuid.uuid4().hex[:6])
 
 
 def parse_elapsed(s):
@@ -173,11 +173,10 @@ def mapa_editor(slug=None):
 @bp.route("/mapas/save", methods=["POST"])
 @login_required
 def mapa_save():
-    import uuid
     d = request.get_json(force=True)
     m = d.get("mapa", {})
     incoming = (m.get("slug") or "").strip().lower()
-    slug = incoming or _slugify(m.get("name"), "mapa")
+    slug = incoming or slugify(m.get("name"), "mapa")
     # mapa NOVO (sem slug) ou "salvar como novo": não sobrescrever um existente
     if (not incoming or m.get("saveAs")) and storage.get_mapa(slug) is not None:
         slug = f"{slug}-{uuid.uuid4().hex[:4]}"
@@ -209,7 +208,6 @@ def mapa_delete(slug):
 @bp.route("/mapas/<slug>/logo", methods=["POST"])
 @login_required
 def mapa_logo(slug):
-    import os
     mapa = storage.get_mapa(slug)
     if not mapa:
         abort(404)
@@ -226,48 +224,6 @@ def mapa_logo(slug):
     storage.save_mapa(mapa)
     flash("Logo enviado.")
     return redirect(url_for("main.mapa_editor", slug=slug))
-
-
-@bp.route("/mapas/<slug>/mapa.pdf")
-@login_required
-def mapa_pdf_only(slug):
-    from io import BytesIO
-    from flask import send_file
-    mapa = storage.get_mapa(slug)
-    if not mapa:
-        abort(404)
-    base = request.args.get("base")          # permite exportar em base diferente da salva
-    if base in ("esri", "topo", "osm"):
-        mapa.base = base
-    try:
-        from ..qgispdf import render_map_pdf_auto
-        buf = BytesIO(render_map_pdf_auto(mapa, current_app.config["BRAND"]))
-        buf.seek(0)
-    except Exception as e:  # noqa
-        flash(f"PDF indisponível ({e}).")
-        return redirect(url_for("main.mapa_editor", slug=slug))
-    return send_file(buf, as_attachment=True, mimetype="application/pdf",
-                     download_name=f"mapa-{slug}.pdf")
-
-
-@bp.route("/mapas/<slug>/pontos.pdf")
-@login_required
-def mapa_pontos_pdf(slug):
-    from io import BytesIO
-    from flask import send_file
-    mapa = storage.get_mapa(slug)
-    if not mapa:
-        abort(404)
-    try:
-        from ..pointspdf import render_points_pdf
-        buf = BytesIO()
-        render_points_pdf(mapa, current_app.config["BRAND"], buf)
-        buf.seek(0)
-    except Exception as e:  # noqa
-        flash(f"Imagens indisponíveis ({e}).")
-        return redirect(url_for("main.mapa_editor", slug=slug))
-    return send_file(buf, as_attachment=True, mimetype="application/pdf",
-                     download_name=f"pontos-{slug}.pdf")
 
 
 @bp.route("/provas")
@@ -293,9 +249,6 @@ def builder(slug=None):
 @bp.route("/builder/save", methods=["POST"])
 @login_required
 def builder_save():
-    import re as _re
-    import uuid
-    from ..core.models import Prova
     d = request.get_json(force=True)
     p = d.get("prova", {})
     pts = d.get("points", [])
@@ -333,8 +286,7 @@ def builder_save():
     slug = (p.get("slug") or "").strip().lower()
     save_as = bool(p.get("saveAs"))
     if not slug:
-        base = _re.sub(r"[^a-z0-9]+", "-", (p.get("name") or "").lower()).strip("-")
-        slug = base or ("prova-" + uuid.uuid4().hex[:6])
+        slug = slugify(p.get("name"), "prova")
     if save_as and storage.get_prova(slug) is not None:
         slug = f"{slug}-{uuid.uuid4().hex[:4]}"   # não sobrescrever uma prova existente
 
@@ -396,69 +348,6 @@ def prova_config(slug):
     r_int = next((p.radius for p in prova.points if p.type not in ("SP", "FP")), 150)
     return render_template("config.html", prova=prova, slug=slug,
                            radius_sp_fp=r_spfp, radius_intermediate=r_int)
-
-
-@bp.route("/prova/<slug>/mapa.pdf")
-@login_required
-def mapa_pdf(slug):
-    """Mapa A3 da prova em escala fiel (B3)."""
-    from io import BytesIO
-    from flask import send_file
-    prova = storage.get_prova(slug)
-    if not prova:
-        abort(404)
-    try:
-        from ..qgispdf import render_map_pdf_auto
-        buf = BytesIO(render_map_pdf_auto(prova, current_app.config["BRAND"]))
-        buf.seek(0)
-    except Exception as e:  # noqa
-        flash(f"Geração do mapa PDF indisponível ({e}).")
-        return redirect(url_for("main.prova_config", slug=slug))
-    return send_file(buf, as_attachment=True, mimetype="application/pdf",
-                     download_name=f"mapa-{slug}.pdf")
-
-
-@bp.route("/prova/<slug>/pontos.pdf")
-@login_required
-def pontos_pdf(slug):
-    """Folha A4 com recortes de satélite de cada ponto (B4)."""
-    from io import BytesIO
-    from flask import send_file
-    prova = storage.get_prova(slug)
-    if not prova:
-        abort(404)
-    try:
-        from ..pointspdf import render_points_pdf
-        buf = BytesIO()
-        render_points_pdf(prova, current_app.config["BRAND"], buf)
-        buf.seek(0)
-    except Exception as e:  # noqa
-        flash(f"Geração das imagens indisponível ({e}). Requer staticmap/Pillow e rede.")
-        return redirect(url_for("main.prova_config", slug=slug))
-    return send_file(buf, as_attachment=True, mimetype="application/pdf",
-                     download_name=f"pontos-{slug}.pdf")
-
-
-@bp.route("/relatorio/<slug>/<bib>.pdf")
-@login_required
-def relatorio_pdf(slug, bib):
-    import os, tempfile
-    from flask import send_file
-    prova = storage.get_prova(slug)
-    pilot = next((p for p in state.pilots(slug) if p.bib == bib), None)
-    if not prova or not pilot:
-        abort(404)
-    try:
-        import sys
-        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-        import gen_report
-    except Exception:
-        flash("Geração de PDF indisponível (instale reportlab e staticmap).")
-        return redirect(url_for("main.relatorio", slug=slug, bib=bib))
-    out = os.path.join(tempfile.gettempdir(), f"relatorio-{slug}-{bib}.pdf")
-    gen_report.render_report(prova, pilot, out)
-    nome = f"relatorio-{pilot.name.replace(' ', '-')}-{slug}.pdf"
-    return send_file(out, as_attachment=True, download_name=nome, mimetype="application/pdf")
 
 
 @bp.route("/relatorio/<slug>/<bib>")
