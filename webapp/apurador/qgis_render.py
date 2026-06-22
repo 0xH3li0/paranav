@@ -26,7 +26,7 @@ from qgis.core import (
     QgsLayoutItemPicture, QgsLayoutSize, QgsLayoutPoint, QgsLayoutExporter,
     QgsUnitTypes, QgsMarkerSymbol, QgsLineSymbol, QgsFillSymbol,
     QgsPalLayerSettings, QgsVectorLayerSimpleLabeling, QgsTextFormat, QgsTextBufferSettings,
-    QgsRectangle,
+    QgsRectangle, QgsLayoutItem, QgsLayoutItemShape,
 )
 from qgis.PyQt.QtGui import QFont, QColor
 
@@ -215,6 +215,19 @@ def render(payload, out_pdf):
             m.setMapRotation(float(frame["angle"]))              # recorte diagonal
         layout.addLayoutItem(m)
 
+        # ---- coluna lateral branca (paisagem/N1, estilo AITA) — atrás da escala/título/logo ----
+        if landscape:
+            side = QgsLayoutItemShape(layout)
+            try:
+                side.setShapeType(QgsLayoutItemShape.Rectangle)
+            except Exception:
+                pass
+            side.attemptMove(QgsLayoutPoint(0, 0, MM))
+            side.attemptResize(QgsLayoutSize(SBW, ph, MM))
+            side.setSymbol(QgsFillSymbol.createSimple({
+                "color": "255,255,255,255", "outline_color": "140,140,140,255", "outline_width": "0.3"}))
+            layout.addLayoutItem(side)
+
         # ---- rosa-dos-ventos (sincronizada com o mapa -> aponta norte real sob rotação) ----
         svg = next((s for s in _NORTH_SVGS if os.path.exists(s)), None)
         if svg:
@@ -258,7 +271,11 @@ def render(payload, out_pdf):
         lbl.setFont(QFont("Sans", 11))
         if landscape:
             lbl.attemptResize(QgsLayoutSize(ph * 0.6, 10, MM))
-            lbl.attemptMove(QgsLayoutPoint(2, ph * 0.5, MM))
+            try:
+                lbl.setReferencePoint(QgsLayoutItem.Middle)       # gira/posiciona pelo centro
+            except Exception:
+                pass
+            lbl.attemptMove(QgsLayoutPoint(SBW * 0.5, ph * 0.5, MM))   # centro da coluna esquerda
             try:
                 lbl.setItemRotation(270)                          # lê de baixo p/ cima (estilo AITA N1)
             except Exception:
