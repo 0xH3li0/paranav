@@ -69,13 +69,13 @@ def _add_points_layer(project, wpts, name, types):
     return vl, sel
 
 
-def _label(vl, size=8):
+def _label(vl, size=8, color=None):
     st = QgsPalLayerSettings()
     st.fieldName = "name"
     tf = QgsTextFormat()
     tf.setFont(QFont("Sans", size))
     tf.setSize(size)
-    tf.setColor(QColor(20, 20, 20))
+    tf.setColor(color or QColor(20, 20, 20))
     buf = QgsTextBufferSettings()
     buf.setEnabled(True)
     buf.setSize(0.8)
@@ -145,7 +145,7 @@ def render(payload, out_pdf):
             lf = QgsFeature()
             lf.setGeometry(QgsGeometry.fromPolylineXY([QgsPointXY(p["lon"], p["lat"]) for p in wp]))
             ll.dataProvider().addFeature(lf)
-            ll.renderer().setSymbol(QgsLineSymbol.createSimple({"color": "255,0,255,255", "width": "0.6"}))
+            ll.renderer().setSymbol(QgsLineSymbol.createSimple({"color": "255,0,255,255", "width": "1.4"}))
             project.addMapLayer(ll, False)
             order.append(ll)
 
@@ -171,7 +171,8 @@ def render(payload, out_pdf):
         vl.renderer().setSymbol(QgsMarkerSymbol.createSimple({
             "name": "circle", "color": "0,0,0,0",
             "outline_color": "230,20,30,255", "outline_width": "0.7", "size": "4"}))
-        _label(vl, 9)
+        # AITA: rótulo magenta no N1, azul no N2
+        _label(vl, 9, QColor(204, 13, 140) if ptype == "n1" else QColor(20, 40, 160))
         project.addMapLayer(vl, False)
         order.append(vl)
 
@@ -179,17 +180,24 @@ def render(payload, out_pdf):
         ext_layer = vl if sel else (rl if base_ok else vl)
         data_ext = vl.extent() if sel else None
 
-        # ---- layout A3 (retrato | paisagem) ----
+        # ---- layout A3: N2/retrato = tarja inferior | N1/paisagem = coluna lateral esquerda (AITA) ----
+        # ⚠️ posições/rotação afinadas contra amostra de produção (QGIS não roda no dev).
         orient = payload.get("orientation", "paisagem")
         pw, ph = (297, 420) if orient == "retrato" else (420, 297)
+        landscape = orient != "retrato"
+        MM = QgsUnitTypes.LayoutMillimeters
+        SBW, BARH = 48.0, 26.0   # largura da coluna lateral (paisagem) / altura da tarja (retrato)
         layout = QgsPrintLayout(project)
         layout.initializeDefaults()
-        layout.pageCollection().page(0).setPageSize(
-            QgsLayoutSize(pw, ph, QgsUnitTypes.LayoutMillimeters))
+        layout.pageCollection().page(0).setPageSize(QgsLayoutSize(pw, ph, MM))
 
         m = QgsLayoutItemMap(layout)
-        m.attemptMove(QgsLayoutPoint(6, 6, QgsUnitTypes.LayoutMillimeters))
-        m.attemptResize(QgsLayoutSize(pw - 12, ph - 28, QgsUnitTypes.LayoutMillimeters))
+        if landscape:                       # AITA N1: info à esquerda, mapa à direita
+            m.attemptMove(QgsLayoutPoint(SBW + 4, 6, MM))
+            m.attemptResize(QgsLayoutSize(pw - SBW - 10, ph - 12, MM))
+        else:                               # AITA N2: mapa em cima, tarja embaixo
+            m.attemptMove(QgsLayoutPoint(6, 6, MM))
+            m.attemptResize(QgsLayoutSize(pw - 12, ph - BARH, MM))
         # setLayers espera TOPO->fundo; `order` foi montado fundo->topo, então inverte
         m.setLayers(list(reversed(order)))
         m.setCrs(QgsCoordinateReferenceSystem(CRS3857))
@@ -212,8 +220,10 @@ def render(payload, out_pdf):
         if svg:
             na = QgsLayoutItemPicture(layout)
             na.setPicturePath(svg)
-            na.attemptResize(QgsLayoutSize(16, 16, QgsUnitTypes.LayoutMillimeters))
-            na.attemptMove(QgsLayoutPoint(10, 10, QgsUnitTypes.LayoutMillimeters))
+            rsz = 20.0 if landscape else 16.0
+            na.attemptResize(QgsLayoutSize(rsz, rsz, MM))
+            na.attemptMove(QgsLayoutPoint(SBW + 8, 9, MM) if landscape
+                           else QgsLayoutPoint(10, 10, MM))
             try:
                 na.setLinkedMap(m)
                 na.setNorthMode(QgsLayoutItemPicture.GridNorth)
@@ -231,10 +241,11 @@ def render(payload, out_pdf):
         sb.setNumberOfSegments(2)
         sb.setNumberOfSegmentsLeft(0)
         sb.update()
-        sb.attemptMove(QgsLayoutPoint(10, ph - 18, QgsUnitTypes.LayoutMillimeters))
+        sb.attemptMove(QgsLayoutPoint(7, 22, MM) if landscape
+                       else QgsLayoutPoint(10, ph - 18, MM))
         layout.addLayoutItem(sb)
 
-        # ---- tarja: título + escala + declinação ----
+        # ---- título + escala + declinação (vertical na coluna p/ N1; tarja inferior p/ N2) ----
         brand = payload.get("brand", "Aeronav")
         title = payload.get("titulo") or payload.get("name") or brand
         decl = payload.get("declinacao", "")
@@ -245,17 +256,26 @@ def render(payload, out_pdf):
         lbl = QgsLayoutItemLabel(layout)
         lbl.setText(info)
         lbl.setFont(QFont("Sans", 11))
-        lbl.attemptMove(QgsLayoutPoint(pw * 0.30, ph - 18, QgsUnitTypes.LayoutMillimeters))
-        lbl.attemptResize(QgsLayoutSize(pw * 0.68, 12, QgsUnitTypes.LayoutMillimeters))
+        if landscape:
+            lbl.attemptResize(QgsLayoutSize(ph * 0.6, 10, MM))
+            lbl.attemptMove(QgsLayoutPoint(2, ph * 0.5, MM))
+            try:
+                lbl.setItemRotation(270)                          # lê de baixo p/ cima (estilo AITA N1)
+            except Exception:
+                pass
+        else:
+            lbl.attemptMove(QgsLayoutPoint(pw * 0.30, ph - 18, MM))
+            lbl.attemptResize(QgsLayoutSize(pw * 0.68, 12, MM))
         layout.addLayoutItem(lbl)
 
-        # ---- logo (rodapé direito), se houver ----
+        # ---- logo (coluna esquerda no N1 / rodapé direito no N2), se houver ----
         logo = payload.get("logo") or ""
         if logo and os.path.exists(logo):
             lg = QgsLayoutItemPicture(layout)
             lg.setPicturePath(logo)
-            lg.attemptResize(QgsLayoutSize(40, 16, QgsUnitTypes.LayoutMillimeters))
-            lg.attemptMove(QgsLayoutPoint(pw - 48, ph - 19, QgsUnitTypes.LayoutMillimeters))
+            lg.attemptResize(QgsLayoutSize(40, 16, MM))
+            lg.attemptMove(QgsLayoutPoint(4, ph - 24, MM) if landscape
+                           else QgsLayoutPoint(pw - 48, ph - 19, MM))
             layout.addLayoutItem(lg)
 
         res = QgsLayoutExporter(layout).exportToPdf(out_pdf, QgsLayoutExporter.PdfExportSettings())

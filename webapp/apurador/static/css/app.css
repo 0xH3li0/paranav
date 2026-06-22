@@ -121,10 +121,10 @@ a:hover{ color:var(--accent-ink); }
 /* barra de ferramentas FLUTUANTE dentro do mapa — 1 LINHA, botões uniformes */
 #toolbar{
   position:absolute; top:10px; left:10px; right:10px; z-index:5;
-  display:flex; align-items:center; gap:8px; flex-wrap:nowrap; overflow-x:auto;
+  display:flex; align-items:center; gap:8px 10px; flex-wrap:wrap;     /* quebra em 2 linhas em vez de esconder grupos atrás de scroll cego */
   padding:6px 8px; background:rgba(255,253,248,.95); backdrop-filter:blur(6px);
   border:1px solid var(--line-2); border-radius:12px;
-  box-shadow:0 6px 18px rgba(10,34,54,.22);
+  box-shadow:0 6px 18px rgba(10,34,54,.22); max-height:calc(100% - 20px); overflow-y:auto;
 }
 #toolbar .tb-group{ display:flex; align-items:center; gap:5px; padding-right:8px; border-right:1px solid var(--line); flex:0 0 auto; }
 #toolbar .tb-group:last-child{ border-right:0; padding-right:0; }
@@ -140,8 +140,8 @@ a:hover{ color:var(--accent-ink); }
 .tb-btn.tb-ok{ background:var(--ok); border-color:var(--ok); color:#fff; }
 .tb-btn.tb-link{ text-decoration:none; }
 .tb-btn.disabled{ opacity:.5; pointer-events:none; }
-#toolbar .tb-sel{ width:auto; min-width:84px; height:32px; padding:2px 6px; font-size:12px; }
-#toolbar .tb-num{ width:66px; height:32px; padding:2px 6px; font-size:12px; }
+#toolbar .tb-sel{ width:auto; min-width:120px; height:32px; padding:2px 24px 2px 8px; font-size:12px; }  /* +padding p/ a seta nativa não comer o texto */
+#toolbar .tb-num{ width:72px; height:32px; padding:2px 6px; font-size:12px; }
 #searchResults .list-group-item{ cursor:pointer; }
 #searchResults .list-group-item:hover{ background:#f3efe5; }
 #fFrameColor{ border:1px solid var(--line-2); }
@@ -151,8 +151,9 @@ a:hover{ color:var(--accent-ink); }
 #layersThumb{ width:64px; height:64px; border-radius:10px; border:2px solid #fff; cursor:pointer;
   background:linear-gradient(135deg,#3a6b35,#244d20); box-shadow:0 2px 8px rgba(0,0,0,.35);
   display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
-#layersThumb #layersLbl{ width:100%; text-align:center; font-size:9.5px; font-weight:700; color:#fff;
-  background:rgba(10,23,34,.55); padding:1px 0; font-family:var(--font-mono); letter-spacing:.02em; }
+#layersThumb #layersLbl{ width:100%; text-align:center; font-size:10px; font-weight:700; color:#fff;
+  background:rgba(10,23,34,.55); padding:1px 3px; font-family:var(--font-mono); letter-spacing:.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 #layersMenu{ position:absolute; left:0; bottom:72px; min-width:160px; background:#fff;
   border:1px solid var(--line-2); border-radius:10px; box-shadow:var(--shadow); padding:5px; }
 #layersMenu .lay-opt{ display:block; width:100%; text-align:left; border:0; background:transparent;
@@ -178,6 +179,17 @@ a:hover{ color:var(--accent-ink); }
 /* ---------- rodapé ---------- */
 footer{ border-top:1px solid var(--line); margin-top:2rem; font-family:var(--font-mono); font-size:11px;
   letter-spacing:.04em; color:var(--muted)!important; }
+
+/* editor de mapa em telas menores — botões/selects respiram (a barra já quebra em linhas) */
+@media (max-width:1200px){
+  #toolbar .tb-btn{ padding:0 7px; }
+  #toolbar .tb-sel{ min-width:108px; }
+}
+@media (max-width:992px){
+  #toolbar{ gap:6px 8px; padding:5px 6px; }
+  #toolbar .tb-btn{ height:30px; min-width:30px; }
+  #toolbar .tb-sel,#toolbar .tb-num{ height:30px; }
+}
 
 @media print{
   .navbar, footer, .btn, form{ display:none!important; }

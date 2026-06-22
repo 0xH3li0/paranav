@@ -13,7 +13,7 @@
 
 const TYPECOL = {SP:'#15803d', FP:'#b91c1c', TP:'#2f6df0', HG:'#7a52c4', TG:'#d97706'};
 const AREACOL = {proibida:'#e53935', atencao:'#f9a825', livre:'#2e9e4f'};
-const BASE_LBL = {esri:'Satélite', topo:'Topográfico', osm:'OpenStreetMap'};
+const BASE_LBL = {esri:'Satélite', topo:'Topo', osm:'OSM'};   // rótulo CURTO do quadradinho (o menu tem o nome completo)
 const $ = (s)=>document.querySelector(s);
 
 let map, draw, drawReady = false;
@@ -179,8 +179,15 @@ function frameFromPoints(){
 
 /* ---------- Terra Draw ---------- */
 function initDraw(){
-  const TD = window.terraDraw, AD = window.terraDrawMapLibreGLAdapter;
-  if(!TD || !AD){ console.error('Terra Draw não carregou (UMD).'); return; }
+  // O bundle UMD do adapter 1.0.0 expõe `terraDrawMaplibreGlAdapter` (microbundle
+  // camelCase do nome do pacote); aceitamos também a grafia antiga por robustez.
+  const TD = window.terraDraw;
+  const AD = window.terraDrawMaplibreGlAdapter || window.terraDrawMapLibreGLAdapter;
+  if(!TD || !AD){
+    console.error('Terra Draw não carregou (UMD).');
+    const h = $('#hint'); if(h) h.innerHTML = '<span class="text-danger">Falha ao carregar as ferramentas de desenho. Verifique a conexão e recarregue a página.</span>';
+    return;
+  }
   const areaFill = (f)=>AREACOL[(f&&areaKinds[f.id])||'proibida'];
   const polyStyles = {fillColor:areaFill, outlineColor:areaFill, fillOpacity:0.22, outlineWidth:2};
   const modes=[]; const add=(fn)=>{ try{ modes.push(fn()); }catch(e){ console.warn('modo Terra Draw indisponível:', e); } };
@@ -332,6 +339,13 @@ function setTool(t){
   if(map){ if(navTool) map.dragPan.enable(); else map.dragPan.disable(); }
   [['tPoint','point'],['tPoly','polygon'],['tRect','rectangle'],['tCirc','circle'],['tRoute','linestring']]
     .forEach(([id,v])=>{const el=$('#'+id); if(el) el.classList.toggle('active', t===v);});
+  // dica contextual por ferramenta (ajuda no retângulo/círculo sob zoom)
+  const HINTS={idle:'',point:'Clique no mapa para adicionar o ponto.',
+    polygon:'Clique nos vértices; clique no 1º ponto (ou Enter) para fechar a área.',
+    rectangle:'Clique num canto, mova e clique no canto oposto. Esc cancela.',
+    circle:'Clique no centro e clique de novo para definir o raio. Esc cancela.',
+    linestring:'Clique nos vértices da rota; Enter finaliza, Esc cancela.'};
+  if(captured){ const h=$('#hint'); if(h && HINTS[t]!==undefined) h.textContent=HINTS[t]; }
 }
 
 /* ---------- pontos ---------- */
