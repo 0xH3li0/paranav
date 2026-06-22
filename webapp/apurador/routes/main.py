@@ -240,9 +240,8 @@ def mapa_pdf_only(slug):
     if base in ("esri", "topo", "osm"):
         mapa.base = base
     try:
-        from ..mappdf import render_map_pdf
-        buf = BytesIO()
-        render_map_pdf(mapa, current_app.config["BRAND"], buf)
+        from ..qgispdf import render_map_pdf_auto
+        buf = BytesIO(render_map_pdf_auto(mapa, current_app.config["BRAND"]))
         buf.seek(0)
     except Exception as e:  # noqa
         flash(f"PDF indisponível ({e}).")
@@ -409,12 +408,11 @@ def mapa_pdf(slug):
     if not prova:
         abort(404)
     try:
-        from ..mappdf import render_map_pdf
-        buf = BytesIO()
-        render_map_pdf(prova, current_app.config["BRAND"], buf)
+        from ..qgispdf import render_map_pdf_auto
+        buf = BytesIO(render_map_pdf_auto(prova, current_app.config["BRAND"]))
         buf.seek(0)
     except Exception as e:  # noqa
-        flash(f"Geração do mapa PDF indisponível ({e}). Instale reportlab.")
+        flash(f"Geração do mapa PDF indisponível ({e}).")
         return redirect(url_for("main.prova_config", slug=slug))
     return send_file(buf, as_attachment=True, mimetype="application/pdf",
                      download_name=f"mapa-{slug}.pdf")

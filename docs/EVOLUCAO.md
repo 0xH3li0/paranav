@@ -92,6 +92,11 @@ Histórico das decisões e marcos, do protótipo ao estado atual. Serve de conte
 - **Contrato de dados inalterado** (`/mapas/save`, `Mapa`, `/api/mapa/<slug>/mapdata`): Terra Draw fala GeoJSON `[lng,lat]`; conversão p/ `[lat,lon]` é local ao editor. **71/71 testes verdes** + regressão sagrada N1/N2/N3 intacta.
 - **A3 PDF:** novo `POST /mapas/<slug>/capture` recebe o **PNG do canvas** (folha já girada/alinhada) → `data/captures/<slug>.png`; `mappdf._capture_bg` usa essa imagem como fundo em escala fiel; **fallback** = `_basemap` (tiles remontados) para mapas sem captura. (⚠️ orientação/flip do fundo a conferir visualmente no 1º uso.)
 
+### Fase 15 — Mapa A3 via QGIS (render server-side, estilo AITA) (jun/2026)
+- **Descoberta (exiftool):** os mapas de referência `referencias/N1_AITA.pdf`/`N2_AITA.pdf` são **saídas de QGIS 3.40 Print Layout** do Alan Braga (A3). O **programa do Marcinho deixou de ser referência** (decisão do Helio) — a referência passou a ser o **mapa AITA (QGIS)**.
+- **Decisão:** substituir o A3 do `mappdf.py` (reportlab) por **render QGIS server-side**. Dois spikes na VPS provaram a viabilidade: QGIS 3.10 headless (ARM64, `apt`) renderiza A3 via **PyQGIS + xvfb**; com **CRS 3857** o basemap topo pinta idêntico à AITA, **1:50000 fiel**, rota pelos waypoints, círculos vermelhos rotulados, **HG ocultos**.
+- **Como ficou:** `apurador/qgis_render.py` (standalone PyQGIS, estilo AITA: basemap por `base`, waypoints+rótulos, rota N2/corredor N3, áreas/pousos, A3 retrato/paisagem, escala fiel, **frame rotacionado** = recorte diagonal, rosa-dos-ventos, barra de escala, tarja) + `apurador/qgispdf.py` (wrapper que roda `xvfb-run /usr/bin/python3 qgis_render.py` como **subprocesso**, pois PyQGIS é do python do sistema, não do venv). As rotas `/mapas/<slug>/mapa.pdf` e `/prova/<slug>/mapa.pdf` tentam QGIS e **caem no `mappdf.py`** (fallback) no dev/sem-QGIS. Gate por env **`APURADOR_QGIS=1`**; `update.sh` instala QGIS idempotente. Não toca `core/`.
+
 ## Estado atual (resumo)
 - **N1 e N2 apuram fiel ao paradigma** (números batem ao segundo / casa decimal); **N3** funciona (não-calibrado).
 - App Flask completo (login, viewer, scores, competições, relatórios PDF, construtor com rota N3/pousos, **mapa A3 + folha A4 de pontos**). Persistência SQLite; deploy no VPS (`https://aeronav.helioandre.com`, Cloudflare Tunnel).
