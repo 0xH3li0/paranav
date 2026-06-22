@@ -37,8 +37,11 @@ _BASES = {
     "esri": ("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 19),
     "osm":  ("https://tile.openstreetmap.org/{z}/{x}/{y}.png", 19),
 }
-# SVGs de rosa-dos-ventos que costumam existir no pacote do QGIS (com fallback)
+# Rosa-dos-ventos: 1ª opção = SVG próprio (estilo AITA, empacotado); depois os do
+# sistema (caso o nosso falhe). Resolve o path absoluto a partir deste arquivo.
+_HERE = os.path.dirname(os.path.abspath(__file__))
 _NORTH_SVGS = [
+    os.path.join(_HERE, "static", "img", "rosa_aita.svg"),
     "/usr/share/qgis/svg/arrows/NorthArrow_02.svg",
     "/usr/share/qgis/svg/wind_roses/WindRose_01.svg",
     "/usr/share/qgis/svg/arrows/NorthArrow_04.svg",

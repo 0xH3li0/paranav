@@ -96,7 +96,11 @@ function init(){
   $('#tRoute').onclick=()=>toggleTool('linestring');
   $('#tUndo').onclick=undo; $('#tRedo').onclick=redo;
   $('#bSave').onclick=()=>save(false); $('#bPublish').onclick=()=>save(true);
-  $('#bPreview').onclick=(e)=>{ e.preventDefault(); const b=$('#mBase').value; save(false, slug=>window.open('/mapas/'+encodeURIComponent(slug)+'/mapa.pdf?base='+encodeURIComponent(b),'_blank')); };  // exporta na base selecionada agora
+  const pdfBase=(b)=>save(false, slug=>window.open('/mapas/'+encodeURIComponent(slug)+'/mapa.pdf?base='+encodeURIComponent(b),'_blank'));
+  $('#bPreview').onclick=(e)=>{ e.preventDefault(); pdfBase($('#mBase').value); };   // base atual
+  [['bPdfTopo','topo'],['bPdfSat','esri'],['bPdfOsm','osm']].forEach(([id,b])=>{
+    const el=$('#'+id); if(el) el.onclick=e=>{ e.preventDefault(); pdfBase(b); };
+  });
   ['dName','dStyle','dTeto','dAlt','dOrg','dTit','dData','dLocal'].forEach(id=>{const el=$('#'+id); if(el) el.onchange=markDirty;});
   $('#pRadius').onchange=()=>{const t=$('#pNext').value; points.forEach(p=>{if(p.type===t)p.radius=+$('#pRadius').value;}); render(); markDirty();};
   document.addEventListener('keydown', e=>{ if((e.key==='Delete'||e.key==='Backspace') && selectedId!=null && !/INPUT|SELECT|TEXTAREA/.test((e.target.tagName||''))) { delSelected(); } });

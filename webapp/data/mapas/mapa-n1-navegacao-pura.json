@@ -6,7 +6,8 @@
     "base": "esri",
     "teto": 0,
     "alturaMin": 0,
-    "logo": ""
+    "logo": "",
+    "declinacao": "23° 10' W"
   },
   "points": [
     {
